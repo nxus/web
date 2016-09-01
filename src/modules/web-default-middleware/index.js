@@ -1,5 +1,6 @@
 import {application, NxusModule} from 'nxus-core'
 import router from 'nxus-router'
+import flash from 'connect-flash'
 
 class WebDefaultMiddleware extends NxusModule {
 
@@ -7,5 +8,5 @@ class WebDefaultMiddleware extends NxusModule {
     super()
 
     router.default().middleware(flash())
-  )
+  }
 }
