@@ -43,7 +43,11 @@ class Controller extends HasModels {
       router.route("POST", routePrefix+"/:id/delete", ::this.remove)
     }
 
-    this.te
+    // Yes, these should be __dirname not local to the subclass
+    // Subclass templates are expected to be loaded by MVCModule or manually?
+    templater.default().template(__dirname+"/templates/web-controller-detail.ejs", "page", this.templatePrefix+"-detail")
+    templater.default().template(__dirname+"/templates/web-controller-list.ejs", "page", this.templatePrefix+"-list")
+    templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
     
   }
 

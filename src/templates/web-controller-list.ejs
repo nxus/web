@@ -1,0 +1,30 @@
+<table class="table table-stripped">
+    <thead>
+        <tr>
+          <% attributes.forEach(function(attr) { %>
+            <th><%= attr.label %></th>
+          <% }) %>
+        </tr>
+    </thead>
+    <tbody>
+      <% objects.forEach(function(u) { %>
+        <tr>
+          <% attributes.forEach(function(attr) { %>
+            <% if(attr.name == instanceTitleField) { %>
+              <td><a href="<%=base%>/<%=u[idField]%>"><%=u[attr.name]%></a></td>
+            <% } else if (attr.type == 'password') { %> <% return %>
+            <% } else if (attr.type == 'boolean') { %>
+            <td><%- u[attr.name] ? '<i class="fa fa-check"></i>' : '' %></td>
+            <% } else { %>
+            <td><%= u[attr.name] %></td>
+            <% } %>
+          <% }) %>
+        </tr>
+      <% }) %>
+    </tbody>   
+</table>
+<div class="row">
+  <div class="col-md-12 text-center">
+    <%- render('web-controller-paginator') %>
+  </div>
+</div>

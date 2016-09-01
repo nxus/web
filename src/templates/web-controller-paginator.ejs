@@ -1,0 +1,37 @@
+<% if(typeof base == 'undefined') { %>
+<% var base = '/' %>
+<% } %>
+<% var page = parseInt(req.param('page')) || 1 %>
+<% var totalPages = Math.ceil(total/itemsPerPage) %>
+<% var previousPage = page > 1 ? page-1 : null %>
+<% var nextPage = page < totalPages ? page+1 : null %>
+<% var pages = _.range(page < 3 ? 1 : page-2, page > totalPages-3 ? totalPages+1 : (page < 3 ? 6 : page+3)) %>
+<% if(pages.length > 1) { %> 
+<ul class="pagination">
+  <% if(previousPage) { %>
+  <li>
+    <a href="<%= base[base.length-1] == '&' ? base : base+"?" %>page=<%= previousPage %>" aria-label="Previous">
+      <span aria-hidden="true">&laquo;</span>
+    </a>
+  </li>
+  <% } else { %>
+    <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+  <% } %>
+  <% pages.forEach(function(p) { %>
+    <li class='<%= p == page ? 'active' : "" %>'><a href="<%= base[base.length-1] == '&' ? base : base+"?" %>page=<%= p %>"><%= p %></a></li>
+  <% }) %>
+  <% if(nextPage) { %>
+  <li>
+    <a href="<%= base[base.length-1] == '&' ? base : base+"?" %>page=<%= nextPage %>" aria-label="Next">
+      <span aria-hidden="true">&raquo;</span>
+    </a>
+  </li>
+  <% } else { %>
+  <li class="disabled">
+    <a href="#" aria-label="Next">
+      <span aria-hidden="true">&raquo;</span>
+    </a>
+  </li>
+  <% } %>
+</ul>
+<% } %>
