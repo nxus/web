@@ -24,7 +24,9 @@
   "homepage": "https://github.com/nxus/web",
   "dependencies": {
     "bluebird": "^3.0.6",
+    "connect-flash": "^0.1.1",
     "glob": "^6.0.1",
+    "morph": "^0.2.0",
     "nxus-core": "^4.0.0-0",
     "nxus-router": "^4.0.0-0",
     "nxus-storage": "^4.0.0-0",
