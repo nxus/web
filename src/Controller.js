@@ -66,14 +66,44 @@ class Controller extends HasModels {
     return this.constructor.name
   }
 
+  
+  get paginationOptions() {
+    return {
+      sortField: "updatedAt",
+      sortDirection: "ASC",
+      itemsPerPage: 20,
+      currentPage: 1,
+    }
+  }
+
   // Finders
 
   get model() {
     return this.models[this.modelIdentity]
   }
 
+  _paginationState(req) {
+    let options = Object.assign({}, this.paginationOptions)
+    options.currentPage =  parseInt(req.param('page')) || 1
+    if (req.param('items')) {
+      options.itemsPerPage = req.param('items')
+    }
+    if (req.param('sort')) {
+      options.sortField = req.param('sort')
+    }
+    if (req.param('dir')) {
+      options.sortDirection = req.param('dir')
+    }
+    return options
+  }
+
   _find(req) {
+    let pageOptions = this.paginationState(req)
     return this.model.find()
+      .where({})
+      .sort(pageOptions.sortField + " " + pageOptions.sortDirection)
+      .limit(pageOptions.itemsPerPage)
+      .skip((pageOptions.currentPage-1)*pageOptions.itemsPerPage)
   }
 
   _findOne(req) {
@@ -90,7 +120,7 @@ class Controller extends HasModels {
   
   list(req, res, query) {
     return query.then((objects) => {
-      return {objects}
+      return {objects, pagination: this.paginationOptions}
     })
   }
 
