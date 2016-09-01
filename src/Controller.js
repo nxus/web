@@ -23,10 +23,10 @@ class Controller extends HasModels {
   constructor() {
     super()
 
-    let routePrefix = this.routePrefix()
+    let routePrefix = this.routePrefix
     router.route(routePrefix, ::this._list)
     router.route(routePrefix+"/:id", ::this._view)
-    if (this.editEnabled()) {
+    if (this.editEnabled) {
       // TODO perhaps this should be via an EditController subclass rather than flag
       router.route(routePrefix+"/create", ::this._create)
       router.route(routePrefix+"/:id/edit", ::this._edit)
@@ -50,19 +50,19 @@ class Controller extends HasModels {
     return morph.toDashed(this.constructor.name)
   }
 
-  templatePrefix() {
+  get templatePrefix() {
     return path.basename(path.dirname(this._dirName))+"-"+this.prefix
   }
 
-  routePrefix() {
+  get routePrefix() {
     return "/"+this.prefix
   }
   
-  editEnabled() {
+  get editEnabled() {
     return true
   }
 
-  displayName() {
+  get displayName() {
     return this.constructor.name
   }
 
@@ -84,7 +84,7 @@ class Controller extends HasModels {
 
   _list(req, res) {
     Promise.resolve(this.list(req, res, this._find(req))).then((context) => {
-      return templater.render(this.templatePrefix()+"-list", context).then(::res.send)
+      return templater.render(this.templatePrefix+"-list", context).then(::res.send)
     })
   }
   
@@ -96,7 +96,7 @@ class Controller extends HasModels {
 
   _view(req, res) {
     Promise.resolve(this.view(req, res, this._findOne(req))).then((context) => {
-      return templater.render(this.templatePrefix()+"-view", context).then(::res.send)
+      return templater.render(this.templatePrefix+"-view", context).then(::res.send)
     })
   }
 
@@ -108,7 +108,7 @@ class Controller extends HasModels {
 
   _edit(req, res) {
     Promise.resolve(this.edit(req, res, this._findOne(req))).then((context) => {
-      return templater.render(this.templatePrefix()+"-edit", context).then(::res.send)
+      return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
     })
   }
   
@@ -120,7 +120,7 @@ class Controller extends HasModels {
 
   _create(req, res) {
     Promise.resolve(this.create(req, res, new this.model())).then((context) => {
-      return templater.render(this.templatePrefix()+"-create", context).then(::res.send)
+      return templater.render(this.templatePrefix+"-create", context).then(::res.send)
     })
   }
   
@@ -134,8 +134,8 @@ class Controller extends HasModels {
   
   remove(req, res) {
     return this.model.destroy(req.params.id).then((inst) => {
-      req.flash('info', "Deleted")
-      return res.redirect(this.routePrefix())
+      req.flash('info', this.displayName + " deleted")
+      return res.redirect(this.routePrefix)
     })
   }
   

@@ -21,8 +21,8 @@ describe("Controller", () => {
       let t = new ThingOne()
       t.modelIdentity.should.equal('thing_one')
       t.prefix.should.equal('thing-one')
-      t.routePrefix().should.equal('/thing-one')
-      t.templatePrefix().should.equal('src-thing-one')
+      t.routePrefix.should.equal('/thing-one')
+      t.templatePrefix.should.equal('src-thing-one')
     })
 
     it("should register routes", () => {
@@ -36,15 +36,20 @@ describe("Controller", () => {
     })
 
     class ThingTwo extends Controller {
+
+      get modelIdentity() {
+        return "other"
+      }
+      
       get prefix() {
         return 'custom'
       }
     }
     it("should have overridden prefixes", () => {
       let t = new ThingTwo()
-      t.modelIdentity.should.equal('thing_two')
+      t.modelIdentity.should.equal('other')
       t.prefix.should.equal('custom')
-      t.templatePrefix().should.equal('src-custom')
+      t.templatePrefix.should.equal('src-custom')
     })
   })
 })
