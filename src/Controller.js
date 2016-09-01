@@ -129,7 +129,22 @@ class Controller extends HasModels {
   }
 
   save(req, res) {
-    
+    let values = req.body
+    let promise = values.id
+      ? this.model.update(values.id, values)
+      : this.model.create(values)
+    promise.then((inst) => {
+      req.flash('info', this.displayName + " saved")
+      res.redirect(this.routePrefix)
+    }).catch((e) => {
+      this.log.error(e)
+      req.flash('error', "Error saving "+this.displayName+": "+e)
+      if (values.id) {
+        res.redirect(this.routePrefix+"/"+values.id+"/edit")
+      } else {
+        res.redirect(this.routePrefix+"/create")
+      }
+    }) 
   }
   
   remove(req, res) {
