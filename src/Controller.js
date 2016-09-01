@@ -10,10 +10,18 @@ import {storage, HasModels} from 'nxus-storage'
  * 
  * # Parameters
  * 
+ * You can define getters on your subclass for the following settings:
+ *  * `modelIdentity` - defaults to name of class, underscored, e.g. `todo_item`
+ *  * `prefix` - defaults to name of class, dashed, e.g. `todo-item`
+ *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
+ *  * `routePrefix` - defaults to "/"+`prefix`
+ *  * `editEnabled` - defaults to true
+ *  * `displayName` - defaults to class name
+ *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
  * 
  * # Implement Routes
  * 
- * 
+ * The default implementation of the routes handles querying for the model instance, pagination, and the template rendering. See the specific method documentation for each public view function.
  * 
  *
  */
@@ -34,6 +42,9 @@ class Controller extends HasModels {
       router.route("POST", routePrefix+"/:id/edit", ::this.save)
       router.route("POST", routePrefix+"/:id/delete", ::this.remove)
     }
+
+    this.te
+    
   }
 
   // Parameters
@@ -72,7 +83,6 @@ class Controller extends HasModels {
       sortField: "updatedAt",
       sortDirection: "ASC",
       itemsPerPage: 20,
-      currentPage: 1,
     }
   }
 
@@ -117,6 +127,14 @@ class Controller extends HasModels {
       return templater.render(this.templatePrefix+"-list", context).then(::res.send)
     })
   }
+
+ /**
+   * Implement the list route. Resolve the passed query and return the context for template `templatePrefix-list`
+   * @param {Request}  req The express request object
+   * @param {Response} res The express response object
+   * @param {object} query A query that can be further filtered or populated before resolution
+   * @returns {object} The context for template rendering. Include `pagination: this.paginationOptions` by default
+   */
   
   list(req, res, query) {
     return query.then((objects) => {
@@ -130,6 +148,14 @@ class Controller extends HasModels {
     })
   }
 
+ /**
+   * Implement the view/detail route. Resolve the passed query and return the
+   * context for template `templatePrefix-view`
+   * @param {Request}  req The express request object
+   * @param {Response} res The express response object
+   * @param {object} query A query for one object that can be further populated before resolution
+   * @returns {object} The context for template rendering.
+   */
   view(req, res, query) {
     return query.then((object) => {
       return {object}
@@ -141,7 +167,15 @@ class Controller extends HasModels {
       return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
     })
   }
-  
+
+   /**
+   * Implement the edit route. Resolve the passed query and return the context for template `templatePrefix-edit`
+   * @param {Request}  req The express request object
+   * @param {Response} res The express response object
+   * @param {object} query A query that can be further filtered or populated before resolution
+   * @returns {object} The context for template rendering.
+   */
+
   edit(req, res, query) {
     return query.then((object) => {
       return {object}
@@ -153,6 +187,14 @@ class Controller extends HasModels {
       return templater.render(this.templatePrefix+"-create", context).then(::res.send)
     })
   }
+
+   /**
+   * Implement the create route. Return the context for template `templatePrefix-create`
+   * @param {Request}  req The express request object
+   * @param {Response} res The express response object
+   * @param {object} object An empty object for setting defaults for the template
+   * @returns {object} The context for template rendering.
+   */
   
   create(req, res, object) {
     return {object}
