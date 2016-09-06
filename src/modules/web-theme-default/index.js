@@ -8,7 +8,7 @@
 
 import {NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
-import {templater} from '../..'
+import {templater} from 'nxus-templater'
 
 class TemplateDefault extends NxusModule {
   constructor(app) {

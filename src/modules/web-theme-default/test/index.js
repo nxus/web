@@ -1,6 +1,6 @@
 import mod from '../'
 
-describe("Web Default Error Pages", () => {
+describe("Web Default Theme", () => {
   it("should import", () => {
     mod.should.not.be.null
   })

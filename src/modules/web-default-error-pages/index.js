@@ -1,8 +1,8 @@
 import {application, NxusModule} from 'nxus-core'
-import router from 'nxus-router'
-import templater from 'nxus-templater'
+import {router} from 'nxus-router'
+import {templater} from 'nxus-templater'
 
-class WebDefaultErrorPages extends NxusModule {
+export default class WebDefaultErrorPages extends NxusModule {
 
   constructor() {
     super()
