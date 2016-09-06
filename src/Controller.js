@@ -1,5 +1,6 @@
 import path from 'path'
 import morph from 'morph'
+import _ from 'underscore'
 import {application} from 'nxus-core'
 import {templater} from 'nxus-templater'
 import {router} from 'nxus-router'
@@ -18,6 +19,8 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `editEnabled` - defaults to true
  *  * `displayName` - defaults to class name
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
+ *  * `ignoreFields` - blacklist of fields to ignore in display
+ *  * `displayFields` - whitelist of fields to display
  * 
  * # Implement Routes
  * 
@@ -90,6 +93,14 @@ class Controller extends HasModels {
     }
   }
 
+  get ignoreFields() {
+    return ['id', 'createdAt', 'updatedAt']
+  }
+
+  get displayFields() {
+    return []
+  }
+
   // Finders
 
   get model() {
@@ -142,7 +153,7 @@ class Controller extends HasModels {
   
   list(req, res, query) {
     return query.then((objects) => {
-      return {objects, pagination: this.paginationOptions}
+      return {objects, pagination: this._paginationState, attributes: this._modelAttributes()}
     })
   }
 
@@ -162,7 +173,7 @@ class Controller extends HasModels {
    */
   view(req, res, query) {
     return query.then((object) => {
-      return {object}
+      return {object, attributes: this._modelAttributes()}
     })
   }
 
@@ -229,6 +240,61 @@ class Controller extends HasModels {
       return res.redirect(this.routePrefix)
     })
   }
+
+  _modelAttributes(withRelated=false) {
+    let model = this.model
+    let ignore = this.ignoreFields
+    let display = this.displayFields
+    let ignoreType = ['objectId']
+    let related = []
+    let attrs = _(model._attributes)
+    .keys()
+    .map((k, i) => {
+      let ret = model._attributes[k]
+      ret.name = k
+      if(!ret.label) ret.label = this._sanitizeAttributeName(k)
+      if(ret.enum) {
+        ret.type = 'enum'
+        ret.opts = ret.enum
+      }
+      if(ret.model) {
+        ret.type = 'related'
+        related.push(ret)
+      }
+      return ret
+    })    
+    .filter((k) => {
+      if(display.length > 0)
+        return display.includes(k.name)
+      else
+        return true
+    })
+    .filter((k) => {
+      let ret = ignore.includes(k.name) 
+      if(!ret) ret = ignoreType.includes(k.type)
+      return !ret
+    })
+    if (!withRelated || _.isEmpty(related)) {
+      return attrs
+    } /* TODO clean this up
+        else {
+      return Promise.map(related, (rel) => {
+        return this.app.get('storage').getModel(rel.model).then((m) => {
+          return m.find()
+        }).then((relInsts) => {
+          rel.instances = relInsts
+        })
+      }).then(() => {
+        return attrs
+      })
+    }
+    */
+  }
+
+  _sanitizeAttributeName(string) {
+    return morph.toTitle(string)
+  }
+  
   
 }
 

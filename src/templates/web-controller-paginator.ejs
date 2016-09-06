@@ -1,8 +1,8 @@
 <% if(typeof base == 'undefined') { %>
 <% var base = '/' %>
 <% } %>
-<% var page = parseInt(req.param('page')) || 1 %>
-<% var totalPages = Math.ceil(total/itemsPerPage) %>
+<% var page = pagination.page %>
+<% var totalPages = Math.ceil(objects.length/pagination.itemsPerPage) %>
 <% var previousPage = page > 1 ? page-1 : null %>
 <% var nextPage = page < totalPages ? page+1 : null %>
 <% var pages = _.range(page < 3 ? 1 : page-2, page > totalPages-3 ? totalPages+1 : (page < 3 ? 6 : page+3)) %>
