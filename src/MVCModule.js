@@ -21,27 +21,38 @@ import {storage, HasModels} from 'nxus-storage'
  *
  */
 
+const REGEX_FILE = /[^\/\~]$/;
+
 class MVCModule extends HasModels {
 
   constructor() {
     super()
 
+    this._controllers = []
     this._model_identities = []
     
-    templater.templateDir(this._dirName+"./templates")
+    templater.templateDir(this._dirName+"/templates")
 
     this._loadControllers()
   }
 
   _loadControllers() {
-    let dir = this._dirName+"./controllers"
+    let dir = this._dirName+"/controllers"
+    this.log.debug("Loading controllers from", dir)
     try {
       fs.accessSync(dir);
     } catch (e) {
       return;
     }
     return fs.readdirAsync(dir).each((file) => {
-      require(path.join(dir, file))
+      if (REGEX_FILE.test(file)) {
+        this.log.debug("Loading controller", this.__name, file)
+        let m = require(path.join(dir, file))
+        if (m.default) {
+          m = m.default
+        }
+        this._controllers.push(new m())
+      }
     })
   }  
   

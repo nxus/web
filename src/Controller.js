@@ -66,7 +66,7 @@ class Controller extends HasModels {
   }
 
   get templatePrefix() {
-    return path.basename(path.dirname(this._dirName))+"-"+this.prefix
+    return this.prefix // path.basename(path.dirname(this._dirName))+"-"+this.prefix
   }
 
   get routePrefix() {
