@@ -22,7 +22,7 @@ describe("Controller", () => {
       t.modelIdentity.should.equal('thing_one')
       t.prefix.should.equal('thing-one')
       t.routePrefix.should.equal('/thing-one')
-      t.templatePrefix.should.equal('src-thing-one')
+      t.templatePrefix.should.equal('thing-one')
     })
 
     it("should register routes", () => {
@@ -49,7 +49,7 @@ describe("Controller", () => {
       let t = new ThingTwo()
       t.modelIdentity.should.equal('other')
       t.prefix.should.equal('custom')
-      t.templatePrefix.should.equal('src-custom')
+      t.templatePrefix.should.equal('custom')
     })
   })
 })

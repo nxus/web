@@ -54,7 +54,7 @@ class Controller extends HasModels {
   // Parameters
   
   modelNames() {
-    return [this._modelIdentity]
+    return [this.modelIdentity]
   }
 
   get modelIdentity() {
@@ -112,7 +112,7 @@ class Controller extends HasModels {
   }
 
   _find(req) {
-    let pageOptions = this.paginationState(req)
+    let pageOptions = this._paginationState(req)
     return this.model.find()
       .where({})
       .sort(pageOptions.sortField + " " + pageOptions.sortDirection)
