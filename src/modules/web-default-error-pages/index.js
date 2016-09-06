@@ -14,15 +14,17 @@ export default class WebDefaultErrorPages extends NxusModule {
   }
 
   _notFoundHandler(req, res, next) {
-    templater.render('404', {opts: app.config, req, user: req.user}).then((body) => {
+    templater.render('404', {opts: application.config, req, user: req.user}).then((body) => {
       res.status(404).send(body)
       next()
     })
   }
   
   _errorHandler(err, req, res, next) {
-    templater.render('500', {opts: this.app.config, req, user: req.user}).then((body) => {
+    templater.render('500', {opts: application.config, req, user: req.user}).then((body) => {
+      this.log.error(err)
       res.status(500).send(body)
+      next()
     })  
   }
 }
