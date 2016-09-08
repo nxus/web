@@ -4,7 +4,7 @@
       <% attributes.forEach(function(attr) { %>
         <% if(typeof attr.type != 'undefined') { %>
             <% attr.value = object[attr.name] %>
-            <%- include("form-inputs/"+attr.type+".ejs", attr) %>
+            <%- render("web-form-input-"+attr.type, attr) %>
         <% } %>
       <% }) %>
 
