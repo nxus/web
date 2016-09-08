@@ -16,8 +16,8 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `prefix` - defaults to name of class, dashed, e.g. `todo-item`
  *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
  *  * `routePrefix` - defaults to "/"+`prefix`
- *  * `editEnabled` - defaults to true
  *  * `displayName` - defaults to class name
+ *  * `instanceTitleField` - defaults to first attribute
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
  *  * `ignoreFields` - blacklist of fields to ignore in display
  *  * `displayFields` - whitelist of fields to display
@@ -30,21 +30,13 @@ import {storage, HasModels} from 'nxus-storage'
  */
 
 
-class Controller extends HasModels {
+class ViewController extends HasModels {
   constructor() {
     super()
 
     let routePrefix = this.routePrefix
     router.route(routePrefix, ::this._list)
     router.route(routePrefix+"/:id", ::this._view)
-    if (this.editEnabled) {
-      // TODO perhaps this should be via an EditController subclass rather than flag
-      router.route(routePrefix+"/create", ::this._create)
-      router.route(routePrefix+"/:id/edit", ::this._edit)
-      router.route("POST", routePrefix+"/create", ::this.save)
-      router.route("POST", routePrefix+"/:id/edit", ::this.save)
-      router.route("POST", routePrefix+"/:id/delete", ::this.remove)
-    }
 
     // Yes, these should be __dirname not local to the subclass
     // Subclass templates are expected to be loaded by MVCModule or manually?
@@ -81,6 +73,10 @@ class Controller extends HasModels {
 
   get displayName() {
     return this.constructor.name
+  }
+
+  get instanceTitleField() {
+    return null
   }
 
   get paginationOptions() {
@@ -181,68 +177,11 @@ class Controller extends HasModels {
     })
   }
 
-   /**
-   * Implement the edit route. Resolve the passed query and return the context for template `templatePrefix-edit`
-   * @param {Request}  req The express request object
-   * @param {Response} res The express response object
-   * @param {object} query A query that can be further filtered or populated before resolution
-   * @returns {object} The context for template rendering.
-   */
-
-  edit(req, res, query) {
-    return query.then((object) => {
-      return {object}
-    })
-  }
-
-  _create(req, res) {
-    Promise.resolve(this.create(req, res, {})).then((context) => {
-      return templater.render(this.templatePrefix+"-create", context).then(::res.send)
-    })
-  }
-
-   /**
-   * Implement the create route. Return the context for template `templatePrefix-create`
-   * @param {Request}  req The express request object
-   * @param {Response} res The express response object
-   * @param {object} object An empty object for setting defaults for the template
-   * @returns {object} The context for template rendering.
-   */
-  
-  create(req, res, object) {
-    return {object}
-  }
-
-  save(req, res) {
-    let values = req.body
-    let promise = values.id
-      ? this.model.update(values.id, values)
-      : this.model.create(values)
-    promise.then((inst) => {
-      req.flash('info', this.displayName + " saved")
-      res.redirect(this.routePrefix)
-    }).catch((e) => {
-      this.log.error(e)
-      req.flash('error', "Error saving "+this.displayName+": "+e)
-      if (values.id) {
-        res.redirect(this.routePrefix+"/"+values.id+"/edit")
-      } else {
-        res.redirect(this.routePrefix+"/create")
-      }
-    }) 
-  }
-  
-  remove(req, res) {
-    return this.model.destroy(req.params.id).then((inst) => {
-      req.flash('info', this.displayName + " deleted")
-      return res.redirect(this.routePrefix)
-    })
-  }
-
   _modelAttributes(withRelated=false) {
     let model = this.model
     let ignore = this.ignoreFields
     let display = this.displayFields
+    let titleField = this.instanceTitleField
     let ignoreType = ['objectId']
     let related = []
     let attrs = _(model._attributes)
@@ -250,6 +189,11 @@ class Controller extends HasModels {
     .map((k, i) => {
       let ret = model._attributes[k]
       ret.name = k
+      if(titleField == null && i ==0) {
+        ret.isTitle = true
+      } else if(titleField == k) {
+        ret.isTitle = true
+      }
       if(!ret.label) ret.label = this._sanitizeAttributeName(k)
       if(ret.enum) {
         ret.type = 'enum'
@@ -296,4 +240,4 @@ class Controller extends HasModels {
   
 }
 
-export default Controller
+export default ViewController

@@ -1,19 +1,19 @@
 import sinon from 'sinon'
 import {router} from 'nxus-router'
-import Controller from '../Controller'
+import ViewController from '../ViewController'
 
-describe("Controller", () => {
+describe("ViewController", () => {
   before(() => {
-    sinon.spy(router, "provide")
+//    sinon.spy(router, "provide")
   })
   
   it("should not be null", () => {
-    Controller.should.not.be.null
+    ViewController.should.not.be.null
   })
 
   describe("Subclassing", () => {
 
-    class ThingOne extends Controller {
+    class ThingOne extends ViewController {
         
     }
 
@@ -28,14 +28,9 @@ describe("Controller", () => {
     it("should register routes", () => {
       router.provide.calledWith("route", "/thing-one").should.be.true
       router.provide.calledWith("route", "/thing-one/:id").should.be.true
-      router.provide.calledWith("route", "/thing-one/:id/edit").should.be.true
-      router.provide.calledWith("route", "/thing-one/create").should.be.true
-      router.provide.calledWith("route", "POST", "/thing-one/:id/edit").should.be.true
-      router.provide.calledWith("route", "POST", "/thing-one/create").should.be.true
-      router.provide.calledWith("route", "POST", "/thing-one/:id/delete").should.be.true
     })
 
-    class ThingTwo extends Controller {
+    class ThingTwo extends ViewController {
 
       get modelIdentity() {
         return "other"

@@ -17,7 +17,7 @@ import {storage, HasModels} from 'nxus-storage'
  *
  *  * Templates from `./templates`
  *  * Models from `./models` - these files should extend `nxus-storage.BaseModel`)
- *  * Controllers from `./controllers` - you may want to extend `nxus-web.Controller` 
+ *  * Controllers from `./controllers` - you may want to extend `nxus-web.ViewController` 
  *
  */
 
