@@ -1,7 +1,7 @@
 <% if(typeof base == 'undefined') { %>
 <% var base = '/' %>
 <% } %>
-<% var page = pagination.page %>
+<% var page = pagination.currentPage %>
 <% var totalPages = Math.ceil(objects.length/pagination.itemsPerPage) %>
 <% var previousPage = page > 1 ? page-1 : null %>
 <% var nextPage = page < totalPages ? page+1 : null %>

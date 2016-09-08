@@ -107,15 +107,15 @@ class Controller extends HasModels {
 
   _paginationState(req) {
     let options = Object.assign({}, this.paginationOptions)
-    options.currentPage =  parseInt(req.param('page')) || 1
-    if (req.param('items')) {
-      options.itemsPerPage = req.param('items')
+    options.currentPage =  parseInt(req.query.page) || 1
+    if (req.query.items) {
+      options.itemsPerPage = req.query.items
     }
-    if (req.param('sort')) {
-      options.sortField = req.param('sort')
+    if (req.query.sort) {
+      options.sortField = req.query.sort
     }
-    if (req.param('dir')) {
-      options.sortDirection = req.param('dir')
+    if (req.query.dir) {
+      options.sortDirection = req.query.dir
     }
     return options
   }
@@ -151,7 +151,7 @@ class Controller extends HasModels {
   
   list(req, res, query) {
     return query.then((objects) => {
-      return {objects, pagination: this._paginationState, attributes: this._modelAttributes()}
+      return {objects, pagination: this._paginationState(req), attributes: this._modelAttributes()}
     })
   }
 
