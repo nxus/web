@@ -2,11 +2,14 @@ import {application, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
 import flash from 'connect-flash'
 
-export default class WebDefaultMiddleware extends NxusModule {
+class WebDefaultMiddleware extends NxusModule {
 
   constructor() {
     super()
-
-    router.default().middleware(flash())
+    
+    router.middleware(flash())
   }
 }
+
+let webDefaultMiddleware = WebDefaultMiddleware.getProxy()
+export {WebDefaultMiddleware as default, webDefaultMiddleware}

@@ -2,14 +2,13 @@ import {application, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
 import {templater} from 'nxus-templater'
 
-export default class WebDefaultErrorPages extends NxusModule {
+class WebDefaultErrorPages extends NxusModule {
 
   constructor() {
     super()
-
-    application.once('launch', () => {
-      router.middleware(::this._notFoundHandler)
-      router.middleware(::this._errorHandler)
+    application.onceAfter('launch', () => {
+      router.replace().middleware(::this._notFoundHandler)
+      router.replace().middleware(::this._errorHandler)
     })
   }
 
@@ -28,3 +27,6 @@ export default class WebDefaultErrorPages extends NxusModule {
     })  
   }
 }
+
+let webDefaultErrorPages = WebDefaultErrorPages.getProxy()
+export {WebDefaultErrorPages as default, webDefaultErrorPages}

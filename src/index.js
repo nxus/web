@@ -3,7 +3,9 @@ import MVCModule from './MVCModule'
 import Controller from './Controller'
 
 class Web extends NxusModule {
-  
+  constructor() {
+    super()
+  }
 }
 
 let web = Web.getProxy()

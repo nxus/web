@@ -51,7 +51,6 @@ class Controller extends HasModels {
     templater.default().template(__dirname+"/templates/web-controller-detail.ejs", "page", this.templatePrefix+"-detail")
     templater.default().template(__dirname+"/templates/web-controller-list.ejs", "page", this.templatePrefix+"-list")
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
-    
   }
 
   // Parameters
@@ -84,7 +83,6 @@ class Controller extends HasModels {
     return this.constructor.name
   }
 
-  
   get paginationOptions() {
     return {
       sortField: "updatedAt",
@@ -198,7 +196,7 @@ class Controller extends HasModels {
   }
 
   _create(req, res) {
-    Promise.resolve(this.create(req, res, new this.model())).then((context) => {
+    Promise.resolve(this.create(req, res, {})).then((context) => {
       return templater.render(this.templatePrefix+"-create", context).then(::res.send)
     })
   }
