@@ -27,7 +27,7 @@ describe("ViewController", () => {
 
     it("should register routes", () => {
       router.provide.calledWith("route", "/thing-one").should.be.true
-      router.provide.calledWith("route", "/thing-one/:id").should.be.true
+      router.provide.calledWith("route", "/thing-one/view/:id").should.be.true
     })
 
     class ThingTwo extends ViewController {

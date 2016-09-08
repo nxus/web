@@ -11,7 +11,7 @@
         <tr>
           <% attributes.forEach(function(attr) { %>
             <% if(attr.isTitle) { %>
-              <td><a href="<%=base%>/<%=u[idField]%>"><%=u[attr.name]%></a></td>
+              <td><a href="<%=base%>/view/<%=u[idField]%>"><%if (u[attr.name]) { %><%=u[attr.name]%><% } else { %>[empty]<%}%></a></td>
             <% } else if (attr.type == 'password') { %> <% return %>
             <% } else if (attr.type == 'boolean') { %>
             <td><%- u[attr.name] ? '<i class="fa fa-check"></i>' : '' %></td>

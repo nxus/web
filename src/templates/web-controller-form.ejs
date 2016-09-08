@@ -1,30 +1,17 @@
-<% if (inst.id && actions) { %>
-<div class="row">
-  <div class="col-md-12">
-  <% actions.forEach(function(action) { %>
-    <% if(req.path != base+"/"+inst.id+"/"+action.subURL) { %>
-    <a class="btn btn-primary" href="<%= base %>/<%=inst.id%>/<%= action.subURL %>"><i class="<%= action.iconClass %>"></i> <%= action.label %><%if (action.suffixName) { %> <%=name%><%}%></a>
-    <% } %>
-  <% }) %>
-  <hr />
-  </div>
-</div>
-<% } %>
-
-<form role="form" action="<%= base %>/save" method="POST" class="form-horizontal form-bordered" id="validateForm">
-    <input type="hidden" id="id" name="id" value="<%= inst.id %>" />
+<form role="form" action="" method="POST" class="form-horizontal form-bordered" id="validateForm">
+    <input type="hidden" id="id" name="<%= idField %>" value="<%= object[idField] %>" />
     <div class="form-body">
       <% attributes.forEach(function(attr) { %>
         <% if(typeof attr.type != 'undefined') { %>
-            <% attr.value = inst[attr.name] %>
-            <%- include("inputs/"+attr.type+".ejs", attr) %>
+            <% attr.value = object[attr.name] %>
+            <%- include("form-inputs/"+attr.type+".ejs", attr) %>
         <% } %>
       <% }) %>
 
     </div>
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-7">
-            <button class="btn btn-theme" type="submit">Save <%= name %></button>        
+            <button class="btn btn-theme" type="submit">Save <%= displayName %></button>        
         </div>
     </div>
 </form>

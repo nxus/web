@@ -21,6 +21,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
  *  * `ignoreFields` - blacklist of fields to ignore in display
  *  * `displayFields` - whitelist of fields to display
+ *  * `idField` - field to use for id in routes
  * 
  * # Implement Routes
  * 
@@ -36,7 +37,7 @@ class ViewController extends HasModels {
 
     let routePrefix = this.routePrefix
     router.route(routePrefix, ::this._list)
-    router.route(routePrefix+"/:id", ::this._view)
+    router.route(routePrefix+"/view/:id", ::this._detail)
 
     // Yes, these should be __dirname not local to the subclass
     // Subclass templates are expected to be loaded by MVCModule or manually?
@@ -95,6 +96,10 @@ class ViewController extends HasModels {
     return []
   }
 
+  get idField() {
+    return 'id'
+  }
+
   // Finders
 
   get model() {
@@ -126,13 +131,26 @@ class ViewController extends HasModels {
   }
 
   _findOne(req) {
-    return this.model.findOne()
+    let query = {}
+    query[this.idField] = req.params.id
+    return this.model.findOne(query)
+  }
+
+  defaultContext(req) {
+    return {
+      pagination: this._paginationState(req),
+      attributes: this._modelAttributes(),
+      displayName: this.displayName,
+      base: this.routePrefix,
+      idField: this.idField
+    }
   }
   
   // Routes
 
   _list(req, res) {
     Promise.resolve(this.list(req, res, this._find(req))).then((context) => {
+      context = Object.assign(context, this.defaultContext(req))
       return templater.render(this.templatePrefix+"-list", context).then(::res.send)
     })
   }
@@ -147,13 +165,21 @@ class ViewController extends HasModels {
   
   list(req, res, query) {
     return query.then((objects) => {
-      return {objects, pagination: this._paginationState(req), attributes: this._modelAttributes()}
+      return {objects}
     })
   }
 
-  _view(req, res) {
-    Promise.resolve(this.view(req, res, this._findOne(req))).then((context) => {
-      return templater.render(this.templatePrefix+"-view", context).then(::res.send)
+  _detail(req, res, next) {
+    this._findOne(req).then((object) => {
+      if (!object) {
+        res.status(404)
+        next()
+      } else {
+        return Promise.resolve(this.detail(req, res, this._findOne(req))).then((context) => {
+          context = Object.assign(context, this.defaultContext(req))
+          return templater.render(this.templatePrefix+"-detail", context).then(::res.send)
+        })
+      }
     })
   }
 
@@ -165,15 +191,9 @@ class ViewController extends HasModels {
    * @param {object} query A query for one object that can be further populated before resolution
    * @returns {object} The context for template rendering.
    */
-  view(req, res, query) {
+  detail(req, res, query) {
     return query.then((object) => {
-      return {object, attributes: this._modelAttributes()}
-    })
-  }
-
-  _edit(req, res) {
-    Promise.resolve(this.edit(req, res, this._findOne(req))).then((context) => {
-      return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
+      return {object}
     })
   }
 

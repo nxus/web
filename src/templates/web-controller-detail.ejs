@@ -1,11 +1,11 @@
 
 <div>
   <% attributes.forEach(function(attr) { %>
-    <% attr.value = inst[attr.name] %>
+    <% attr.value = object[attr.name] %>
     <div>
       <span><strong><%= attr.label %></strong></span> <span><%= attr.value %></span>
     </div>
   <% }) %>
 </div>
 <br/>
-<a href="<%= base %>" class="btn btn-primary"><i class="fa fa-arrow-left"></i> <%= name %> List</a>
+<a href="<%= base %>" class="btn btn-primary"><i class="fa fa-arrow-left"></i> <%= displayName %> List</a>
