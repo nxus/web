@@ -9,7 +9,8 @@
     "test": "NODE_ENV=test mocha --compilers js:babel-core/register -R spec src/test/*.js src/modules/**/test/*.js",
     "compile": "babel src --out-dir lib --ignore src/modules/web-theme-default/template/js/*,src/modules/web-theme-default/template/dist/*,src/modules/web-theme-default/template/bower_components/*; cp -r src/modules/web-theme-default/template lib/modules/web-theme-default/; cp -r src/templates lib/",
     "prepublish": "npm run compile",
-    "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js ./src/modules/*/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
+    "postpublish": "npm run build-docs && npm run publish-docs",
+    "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/index.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
     "publish-docs": "npm run build-docs && git add ./README.md && git commit -m 'Updated README API Docs' && git push"
   },
   "repository": {
