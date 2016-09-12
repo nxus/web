@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<%- include('head.ejs') %>
+<%- include('../partials/head.ejs') %>
 
 <body>
-
     <div id="wrapper">
-        <%- include('flash.ejs') %>
+        <%- render('flash', {req}) %>
         <%- content %>
     </div>
     <!-- /#wrapper -->
-    <%- include('scripts.ejs') %>
+    <%- include('../partials/scripts.ejs') %>
 </body>
 
 </html>
