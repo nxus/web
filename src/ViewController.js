@@ -142,7 +142,8 @@ class ViewController extends HasModels {
       attributes: this._modelAttributes(),
       displayName: this.displayName,
       base: this.routePrefix,
-      idField: this.idField
+      idField: this.idField,
+      title: this.displayName
     }
   }
   
@@ -193,7 +194,7 @@ class ViewController extends HasModels {
    */
   detail(req, res, query) {
     return query.then((object) => {
-      return {object}
+      return {object, title: this.displayName + ": " + object[this.titleField]}
     })
   }
 

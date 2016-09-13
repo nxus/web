@@ -31,7 +31,7 @@ class MVCModule extends HasModels {
     this._controllers = []
     this._model_identities = []
     
-    templater.templateDir(this._dirName+"/templates")
+    templater.templateDir(this._dirName+"/templates/*.ejs", "page")
 
     this._loadControllers()
   }
