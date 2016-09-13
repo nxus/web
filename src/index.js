@@ -9,7 +9,7 @@ class Web extends NxusModule {
     super()
 
     // Expose base controller templates at global names
-    templater.default().templateDir(__dirname+"/templates/*.ejs", "page")
+    templater.default().templateDir(__dirname+"/templates/*.ejs")
     templater.default().templateDir(__dirname+"/templates/form-inputs/*.ejs")
   }
 }
