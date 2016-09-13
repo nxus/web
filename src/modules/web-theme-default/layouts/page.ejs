@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<%- include('../partials/head.ejs') %>
-
-<body>
-
-    <div id="wrapper">
-<!-- Page Content -->
         <div id="blank-page-wrapper">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header"><%= typeof title != "undefined" ? title : "Nxus" %></h1>
-                        <%- render('flash', {req}) %>
                         <%- content %>
                     </div>
                     <!-- /.col-lg-12 -->
@@ -22,10 +13,3 @@
             <!-- /.container-fluid -->
         </div>
         <!-- /#page-wrapper -->
-
-    </div>
-    <!-- /#wrapper -->
-    <%- include('../partials/scripts.ejs') %>
-</body>
-
-</html>
