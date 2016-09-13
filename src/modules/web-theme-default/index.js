@@ -1,33 +1,34 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2016-02-04 16:41:53
-* @Last Modified 2016-09-07
+* @Last Modified 2016-09-12
 */
 
 'use strict';
 
-import {NxusModule} from 'nxus-core'
+import {application as app, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
 import {templater} from 'nxus-templater'
 
 class TemplateDefault extends NxusModule {
-  constructor(app) {
-    super(app)
-    let dir = __dirname+"/template"
-    templater.default().template(dir+'/default.ejs');
-    templater.default().template(dir+'/flash.ejs');
-    templater.default().template(dir+'/page.ejs');
-    templater.default().template(dir+'/admin.ejs');
-    templater.default().template(dir+'/404.ejs');
-    templater.default().template(dir+'/500.ejs');
-    templater.default().template(dir+'/scripts.ejs');
-    templater.default().template(dir+'/scripts_include.ejs');
+  constructor() {
+    super()
+    let dir = __dirname
+    templater.default().template(dir+'/layouts/default.ejs')
+    templater.default().template(dir+'/layouts/bare.ejs')
+    templater.default().template(dir+'/layouts/admin.ejs')
+    templater.default().template(dir+'/layouts/page.ejs', 'default')
+    templater.default().template(dir+'/layouts/404.ejs', 'page')
+    templater.default().template(dir+'/layouts/500.ejs', 'page')
 
-    router.default().staticRoute("/dist", dir+"/dist")
-    router.default().staticRoute("/js", dir+"/js")
-    router.default().staticRoute("/bower_components", dir+"/bower_components")
+    templater.default().templateDir(dir+'/partials')
+    
+    router.default().staticRoute("/assets", __dirname+"/assets")
+
+    templater.on('renderContext', () => {
+      return {siteName: app.config.siteName}
+    })
   }
-
 }
 
 let templateDefault = TemplateDefault.getProxy()
