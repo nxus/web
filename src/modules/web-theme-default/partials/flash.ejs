@@ -1,4 +1,4 @@
-                <% if(typeof req != 'undefined') { %>
+                <% if(typeof req != 'undefined' && req.flash != 'undefined') { %>
                 <% var messages = req.flash(); %>
                 <% if (messages.error && messages.error.length > 0) { %>
                 <% messages.error.forEach(function(flash) { %>
