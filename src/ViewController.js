@@ -32,8 +32,15 @@ import {storage, HasModels} from 'nxus-storage'
 
 
 class ViewController extends HasModels {
-  constructor() {
-    super()
+  constructor(options={}) {
+    if (!options.modelNames) {
+      options.modelNames = [options]
+    }
+    super(options)
+
+    this._modelIdentity = options.modelIdentity
+    this._prefix = options.prefix
+    this._displayName = options.displayName
 
     let routePrefix = this.routePrefix
     router.route(routePrefix, ::this._list)
@@ -48,16 +55,12 @@ class ViewController extends HasModels {
 
   // Parameters
   
-  modelNames() {
-    return [this.modelIdentity]
-  }
-
   get modelIdentity() {
-    return morph.toSnake(this.constructor.name)
+    return this._modelIdentity || morph.toSnake(this.constructor.name)
   }
 
   get prefix() {
-    return morph.toDashed(this.constructor.name)
+    return this._prefix || morph.toDashed(this.constructor.name)
   }
 
   get templatePrefix() {
@@ -73,7 +76,7 @@ class ViewController extends HasModels {
   }
 
   get displayName() {
-    return this.constructor.name
+    return this._displayName || this.constructor.name
   }
 
   get instanceTitleField() {

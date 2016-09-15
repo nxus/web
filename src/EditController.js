@@ -20,8 +20,8 @@ import ViewController from './ViewController'
  */
 
 class EditController extends ViewController {
-  constructor() {
-    super()
+  constructor(options) {
+    super(options)
 
     let routePrefix = this.routePrefix
     router.route(routePrefix+"/create", ::this._create)
