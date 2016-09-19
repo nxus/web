@@ -15,7 +15,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `modelIdentity` - defaults to name of class, underscored, e.g. `todo_item`
  *  * `prefix` - defaults to name of class, dashed, e.g. `todo-item`
  *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
- *  * `routePrefix` - defaults to "/"+`prefix`
+ *  * `routePrefix` - defaults to '/'+`prefix`
  *  * `displayName` - defaults to class name
  *  * `instanceTitleField` - defaults to first attribute
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
@@ -43,12 +43,13 @@ class ViewController extends HasModels {
     this.modelIdentity = options.modelIdentity || _modelIdentity
     this.prefix = options.prefix || morph.toDashed(new.target.name)
     this.templatePrefix = options.templatePrefix || this.prefix
-    this.routePrefix = options.routePrefix || "/" + this.prefix
+    this.pageTemplate = options.pageTemplate || 'page'
+    this.routePrefix = options.routePrefix || '/' + this.prefix
     this.displayName = options.displayName || new.target.name
     this.instanceTitleField = options.instanceTitleField || null
     this.paginationOptions = options.paginationOptions || {
-      sortField: "updatedAt",
-      sortDirection: "ASC",
+      sortField: 'updatedAt',
+      sortDirection: 'ASC',
       itemsPerPage: 20,
     }
     this.ignoreFields = options.ignoreFields || ['id', 'createdAt', 'updatedAt']
@@ -59,13 +60,13 @@ class ViewController extends HasModels {
 
     let routePrefix = this.routePrefix
     router.route(routePrefix, ::this._list)
-    router.route(routePrefix+"/view/:id", ::this._detail)
+    router.route(routePrefix+'/view/:id', ::this._detail)
 
     // Yes, these should be __dirname not local to the subclass
     // Subclass templates are expected to be loaded by MVCModule or manually?
-    templater.default().template(__dirname+"/templates/web-controller-detail.ejs", "page", this.templatePrefix+"-detail")
-    templater.default().template(__dirname+"/templates/web-controller-list.ejs", "page", this.templatePrefix+"-list")
-    templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
+    templater.default().template(__dirname+'/templates/web-controller-detail.ejs', this.pageTemplate, this.templatePrefix+'-detail')
+    templater.default().template(__dirname+'/templates/web-controller-list.ejs', this.pageTemplate, this.templatePrefix+'-list')
+    templater.default().template(__dirname+'/templates/web-controller-paginator.ejs')
   }
 
   // Finders
@@ -93,7 +94,7 @@ class ViewController extends HasModels {
     let pageOptions = this._paginationState(req)
     return this.model.find()
       .where({})
-      .sort(pageOptions.sortField + " " + pageOptions.sortDirection)
+      .sort(pageOptions.sortField + ' ' + pageOptions.sortDirection)
       .limit(pageOptions.itemsPerPage)
       .skip((pageOptions.currentPage-1)*pageOptions.itemsPerPage)
   }
@@ -121,7 +122,7 @@ class ViewController extends HasModels {
   _list(req, res) {
     Promise.resolve(this.list(req, res, this._find(req))).then((context) => {
       context = Object.assign(context, this.defaultContext(req))
-      return templater.render(this.templatePrefix+"-list", context).then(::res.send)
+      return templater.render(this.templatePrefix+'-list', context).then(::res.send)
     })
   }
 
@@ -147,7 +148,7 @@ class ViewController extends HasModels {
       } else {
         return Promise.resolve(this.detail(req, res, this._findOne(req))).then((context) => {
           context = Object.assign(context, this.defaultContext(req))
-          return templater.render(this.templatePrefix+"-detail", context).then(::res.send)
+          return templater.render(this.templatePrefix+'-detail', context).then(::res.send)
         })
       }
     })
@@ -163,7 +164,7 @@ class ViewController extends HasModels {
    */
   detail(req, res, query) {
     return query.then((object) => {
-      return {object, title: this.displayName + ": " + object[this.titleField]}
+      return {object, title: this.displayName + ': ' + object[this.titleField]}
     })
   }
 
