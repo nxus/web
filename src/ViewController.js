@@ -11,7 +11,7 @@ import {storage, HasModels} from 'nxus-storage'
  * 
  * # Parameters
  * 
- * You can define getters on your subclass for the following settings:
+ * You can pass any of the following into the constructor options argument:
  *  * `modelIdentity` - defaults to name of class, underscored, e.g. `todo_item`
  *  * `prefix` - defaults to name of class, dashed, e.g. `todo-item`
  *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
@@ -33,14 +33,29 @@ import {storage, HasModels} from 'nxus-storage'
 
 class ViewController extends HasModels {
   constructor(options={}) {
+    let _modelIdentity = options.modelIdentity || morph.toSnake(new.target.name)
     if (!options.modelNames) {
-      options.modelNames = [options]
+      options.modelNames = [_modelIdentity]
     }
+    
     super(options)
 
-    this._modelIdentity = options.modelIdentity
-    this._prefix = options.prefix
-    this._displayName = options.displayName
+    this.modelIdentity = options.modelIdentity || _modelIdentity
+    this.prefix = options.prefix || morph.toDashed(new.target.name)
+    this.templatePrefix = options.templatePrefix || this.prefix
+    this.routePrefix = options.routePrefix || "/" + this.prefix
+    this.displayName = options.displayName || new.target.name
+    this.instanceTitleField = options.instanceTitleField || null
+    this.paginationOptions = options.paginationOptions || {
+      sortField: "updatedAt",
+      sortDirection: "ASC",
+      itemsPerPage: 20,
+    }
+    this.ignoreFields = options.ignoreFields || ['id', 'createdAt', 'updatedAt']
+    this.displayFields = options.displayFields || []
+    this.idField = options.idField || 'id'
+
+    
 
     let routePrefix = this.routePrefix
     router.route(routePrefix, ::this._list)
@@ -51,56 +66,6 @@ class ViewController extends HasModels {
     templater.default().template(__dirname+"/templates/web-controller-detail.ejs", "page", this.templatePrefix+"-detail")
     templater.default().template(__dirname+"/templates/web-controller-list.ejs", "page", this.templatePrefix+"-list")
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
-  }
-
-  // Parameters
-  
-  get modelIdentity() {
-    return this._modelIdentity || morph.toSnake(this.constructor.name)
-  }
-
-  get prefix() {
-    return this._prefix || morph.toDashed(this.constructor.name)
-  }
-
-  get templatePrefix() {
-    return this.prefix // path.basename(path.dirname(this._dirName))+"-"+this.prefix
-  }
-
-  get routePrefix() {
-    return "/"+this.prefix
-  }
-  
-  get editEnabled() {
-    return true
-  }
-
-  get displayName() {
-    return this._displayName || this.constructor.name
-  }
-
-  get instanceTitleField() {
-    return null
-  }
-
-  get paginationOptions() {
-    return {
-      sortField: "updatedAt",
-      sortDirection: "ASC",
-      itemsPerPage: 20,
-    }
-  }
-
-  get ignoreFields() {
-    return ['id', 'createdAt', 'updatedAt']
-  }
-
-  get displayFields() {
-    return []
-  }
-
-  get idField() {
-    return 'id'
   }
 
   // Finders
@@ -141,6 +106,7 @@ class ViewController extends HasModels {
 
   defaultContext(req) {
     return {
+      req: req,
       pagination: this._paginationState(req),
       attributes: this._modelAttributes(),
       displayName: this.displayName,
