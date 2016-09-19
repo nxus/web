@@ -32,16 +32,10 @@ describe("ViewController", () => {
 
     class ThingTwo extends ViewController {
 
-      get modelIdentity() {
-        return "other"
-      }
-      
-      get prefix() {
-        return 'custom'
-      }
     }
+
     it("should have overridden prefixes", () => {
-      let t = new ThingTwo()
+      let t = new ThingTwo({modelIdentity: 'other', templatePrefix: 'custom', prefix: 'custom'})
       t.modelIdentity.should.equal('other')
       t.prefix.should.equal('custom')
       t.templatePrefix.should.equal('custom')
