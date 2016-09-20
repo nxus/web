@@ -1,5 +1,9 @@
 import Nav from '../'
 
+import {templater} from 'nxus-templater'
+
+import sinon from 'sinon'
+
 describe("Web Nav", () => {
   var m
   describe("Load", () => {
@@ -102,6 +106,18 @@ describe("Web Nav", () => {
 
     it("should put items with no explicit order at the end", () => {
       menu[2].label.should.equal('item3')
+    })
+  })
+
+  describe("Should Register the template", () => {
+    before(() => {
+      templater.templateFunction = sinon.spy()
+      m = new Nav()
+      m.add('menu', 'item', '/item')
+    })
+
+    it("should register a template with the menu name", () => {
+      templater.templateFunction.calledWith('menu').should.be.true
     })
   })
 
