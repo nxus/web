@@ -32,8 +32,8 @@ class EditController extends ViewController {
 
     // Yes, these should be __dirname not local to the subclass
     // Subclass templates are expected to be loaded by MVCModule or manually?
-    templater.default().template(__dirname+"/templates/web-controller-form.ejs", "page", this.templatePrefix+"-create")
-    templater.default().template(__dirname+"/templates/web-controller-form.ejs", "page", this.templatePrefix+"-edit")
+    templater.default().template(__dirname+"/templates/web-controller-form.ejs", this.pageTemplate, this.templatePrefix+"-create")
+    templater.default().template(__dirname+"/templates/web-controller-form.ejs", this.pageTemplate, this.templatePrefix+"-edit")
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
   }
 

@@ -16,6 +16,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `prefix` - defaults to name of class, dashed, e.g. `todo-item`
  *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
  *  * `routePrefix` - defaults to '/'+`prefix`
+ *  * `pageTemplate` - the layout to use to render the page
  *  * `displayName` - defaults to class name
  *  * `instanceTitleField` - defaults to first attribute
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
