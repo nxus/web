@@ -14,7 +14,6 @@ class TemplateDefault extends NxusModule {
   constructor() {
     super()
     let dir = __dirname
-    console.log('registering templstae')
     templater.default().template(dir+'/layouts/default.ejs')
     templater.default().template(dir+'/layouts/bare.ejs')
     templater.default().template(dir+'/layouts/admin.ejs')
