@@ -11,12 +11,6 @@ class Nav extends NxusModule {
     this._menus = {}
 
     templater.template(__dirname+'/templates/nav-menu.ejs')
-
-    templater.on('renderContext', () => {
-      return {
-        navMenus: this._menus
-      }
-    })
   }
   
   /**
@@ -59,7 +53,7 @@ class Nav extends NxusModule {
       this._menus[menu] = []
     }
     templater.templateFunction(menu, (opts) => {
-      return templater.render('nav-menu', {menu, items: this.get(menu)})
+      return templater.render('nav-menu', {menu, items: this.get(menu), ...opts})
     })
   }
 }

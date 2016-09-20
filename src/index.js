@@ -4,6 +4,8 @@ import MVCModule from './MVCModule'
 import ViewController from './ViewController'
 import EditController from './EditController'
 
+import {default as Nav, nav} from './modules/web-nav'
+
 class Web extends NxusModule {
   constructor() {
     super()
@@ -15,4 +17,4 @@ class Web extends NxusModule {
 }
 
 let web = Web.getProxy()
-export {Web as default, web, MVCModule, ViewController, EditController}
+export {Web as default, web, MVCModule, ViewController, EditController, nav, Nav}
