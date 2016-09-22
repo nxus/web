@@ -1,0 +1,4 @@
+<% if(actions.default) { actions = actions.default } %>
+<% actions.forEach(function(action) { %>
+  <a class="<%= action.displayClass %>" href="<%= makeActionUrl(action.link) %>" title="<%= action.label %>"><i class="<%= action.icon %>"></i></a>
+<% }) %>

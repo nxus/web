@@ -113,6 +113,7 @@ class ViewController extends HasModels {
       attributes: this._modelAttributes(),
       displayName: this.displayName,
       base: this.routePrefix,
+      instanceUrl: this.routePrefix+"/view",
       idField: this.idField,
       title: this.displayName
     }

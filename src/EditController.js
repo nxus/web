@@ -37,6 +37,12 @@ class EditController extends ViewController {
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
   }
 
+  defaultContext(req) {
+    let ret = super.defaultContext(req)
+    ret.instanceUrl = this.routePrefix+"/edit"
+    return ret
+  }
+
   // Routes
 
   _edit(req, res, next) {
