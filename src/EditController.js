@@ -89,7 +89,7 @@ class EditController extends ViewController {
    */
   
   create(req, res, object) {
-    return {title: "Create" + this.displayName, object}
+    return {title: "Create " + this.displayName, object}
   }
 
   save(req, res) {
