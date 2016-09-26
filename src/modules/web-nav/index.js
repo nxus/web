@@ -21,8 +21,10 @@ class Nav extends NxusModule {
    * @param {object} options Extra context for rendering (icon, css)
    */
   add(menu, label, link, options = {}) {
-    this._createMenu(menu)
-    if(options.subMenu) this._createMenu(options.subMenu)
+    menu = this._createMenu(menu)
+    if(options.subMenu) {
+      options.subMenu = this._createMenu(options.subMenu)
+    } 
     this._menus[menu].push({label, link, ...options})
   }
 
@@ -47,14 +49,15 @@ class Nav extends NxusModule {
   }
 
   _createMenu(menu) {
-    this.log.debug('Registering Nav Menu', menu)
     menu = morph.toDashed(menu)
+    this.log.debug('Registering Nav Menu', menu)
     if (!this._menus[menu]) {
       this._menus[menu] = []
     }
     templater.templateFunction(menu, (opts) => {
       return templater.render('nav-menu', {menu, items: this.get(menu), ...opts})
     })
+    return menu
   }
 }
 
