@@ -1,4 +1,5 @@
 <% if(actions.default) { actions = actions.default } %>
 <% actions.forEach(function(action) { %>
-  <a class="btn btn-primary <%= action.displayClass %>" href="<%= makeActionUrl(action.link) %>"><i class="<%= action.icon %>"></i> <%= action.label %></a>
+  <% action.link = makeActionUrl(action.link) %>
+  <%- render(action.template, action)%>
 <% }) %>

@@ -2,6 +2,26 @@ import {NxusModule} from 'nxus-core'
 import {templater} from 'nxus-templater'
 import _ from 'underscore'
 
+/*
+ * # API
+ * Example adding a link button to the template 'template-name':
+ * ```actions.add('template-name', 'Label', '/link' {icon: 'fa fa-plus'})```
+ * 
+ * You may additionally group actions together by providing a 'group' key to the options object. 
+ *
+ * # Templates
+ *
+ * This module provides four templates that may be overridden:
+ *  * `actions-buttons` to render an action group as buttons
+ *  * `actions-button` the default template for each button
+ *  * `actions-icons` to render an action group as minimal icons
+ *  * `actions-icon` the default templateMinimal for each icon
+ *  
+ *  Rather than overriding all buttons/icons, you may provide a custom template for a specific action as the `template` or `templateMinimal` option. When rendered with the default `actions-buttons` or `actions-icons` templates, these receive an action's object as their only context.
+ *  
+ */
+
+
 class WebActions extends NxusModule {
   constructor(opts) {
     super(opts)
@@ -27,6 +47,12 @@ class WebActions extends NxusModule {
       })
     }
     if(!options.group) options.group = 'default'
+    if(!options.template) {
+      options.template = 'actions-button'
+      if (!options.templateMinimal) {
+        options.templateMinimal = 'actions-icon'
+      }
+    }
     
     this._actions[template].push({
       label,
