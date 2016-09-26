@@ -17,6 +17,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
  *  * `routePrefix` - defaults to '/'+`prefix`
  *  * `pageTemplate` - the layout to use to render the page
+ *  * `populate` - relationships to populate on find
  *  * `displayName` - defaults to class name
  *  * `instanceTitleField` - defaults to first attribute
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
@@ -45,6 +46,7 @@ class ViewController extends HasModels {
     this.prefix = options.prefix || morph.toDashed(new.target.name)
     this.templatePrefix = options.templatePrefix || this.prefix
     this.pageTemplate = options.pageTemplate || 'page'
+    this.populate = options.populate || null
     this.routePrefix = options.routePrefix || '/' + this.prefix
     this.displayName = options.displayName || new.target.name
     this.paginationOptions = options.paginationOptions || {
@@ -93,17 +95,25 @@ class ViewController extends HasModels {
 
   _find(req) {
     let pageOptions = this._paginationState(req)
-    return this.model.find()
+    let find = this.model.find()
       .where({})
       .sort(pageOptions.sortField + ' ' + pageOptions.sortDirection)
       .limit(pageOptions.itemsPerPage)
       .skip((pageOptions.currentPage-1)*pageOptions.itemsPerPage)
+    if (this.populate) {
+      find.populate(this.populate)
+    }
+    return find
   }
 
   _findOne(req) {
     let query = {}
     query[this.idField] = req.params.id
-    return this.model.findOne(query)
+    let find =  this.model.findOne(query)
+    if (this.populate) {
+      find.populate(this.populate)
+    }
+    return find
   }
 
   defaultContext(req) {

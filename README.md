@@ -18,12 +18,13 @@ A base class for CRUD routes and templates for a model
 
 ## Parameters
 
-You can define getters on your subclass for the following settings:
+You can pass any of the following into the constructor options argument:
 
 -   `modelIdentity` - defaults to name of class, underscored, e.g. `todo_item`
 -   `prefix` - defaults to name of class, dashed, e.g. `todo-item`
 -   `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
--   `routePrefix` - defaults to "/"+`prefix`
+-   `routePrefix` - defaults to '/'+`prefix`
+-   `pageTemplate` - the layout to use to render the page
 -   `displayName` - defaults to class name
 -   `instanceTitleField` - defaults to first attribute
 -   `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
@@ -97,3 +98,24 @@ Implement the create route. Return the context for template `templatePrefix-crea
 -   `object` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** An empty object for setting defaults for the template
 
 Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
+
+## add
+
+Register a nav menu item
+
+**Parameters**
+
+-   `menu` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Group of nav items
+-   `label` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Text for menu item
+-   `link` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** URL of menu item
+-   `options` **\[[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)](default {})** Extra context for rendering (icon, css)
+
+## get
+
+Retrieve a menu group
+
+**Parameters**
+
+-   `menu` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Group of nav items
+
+Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** Menu items
