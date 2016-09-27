@@ -94,6 +94,7 @@ class EditController extends ViewController {
 
   save(req, res) {
     let values = req.body
+    values = this._convertValues(values)
     let promise = values[this.idField]
       ? this.model.update(values[this.idField], values)
       : this.model.create(values)
@@ -109,6 +110,23 @@ class EditController extends ViewController {
         res.redirect(this.routePrefix+"/create")
       }
     }) 
+  }
+
+  _convertValues(values) {
+    let attrs = this._modelAttributes()
+    attrs.forEach((attr) => {
+      if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined')
+      if(attr.type == 'array') {
+        values[attr.name] = values[attr.name].split(',')
+      }
+      try {
+        if(attr.type == 'json' || attr.type == 'mixed') values[attr.name] = JSON.parse(values[attr.name])
+      } catch (e) {
+        this.log.error("Error processing json or mixed value of " + attr.name, e)
+        delete values[attr.name]
+      }
+    })
+    return values
   }
   
   remove(req, res) {

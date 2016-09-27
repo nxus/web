@@ -1,5 +1,4 @@
-<% if(actions.default) { actions = actions.default } %>
 <% actions.forEach(function(action) { %>
-  <% action.link = makeActionUrl(action.link) %>
-  <%- render(action.templateMinimal || action.template, action) %>
+  <% action.fullLink = makeActionUrl(action.link) %>
+  <%- render(action.templateMinimal, {action}) %>
 <% }) %>

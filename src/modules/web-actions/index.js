@@ -47,13 +47,14 @@ class WebActions extends NxusModule {
       })
     }
     if(!options.group) options.group = 'default'
+    if(!options.displayClass) options.displayClass = ''
+    if(!options.icon) options.icon = ''
     if(!options.template) {
       options.template = 'actions-button'
-      if (!options.templateMinimal) {
-        options.templateMinimal = 'actions-icon'
-      }
     }
-    
+    if (!options.templateMinimal) {
+      options.templateMinimal = 'actions-icon'
+    }
     this._actions[template].push({
       label,
       link,
