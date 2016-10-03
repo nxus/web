@@ -37,6 +37,12 @@ class EditController extends ViewController {
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
   }
 
+  defaultContext(req) {
+    let ret = super.defaultContext(req)
+    ret.instanceUrl = this.routePrefix+"/edit"
+    return ret
+  }
+
   // Routes
 
   _edit(req, res, next) {
@@ -46,7 +52,7 @@ class EditController extends ViewController {
         next()
       } else {
         Promise.resolve(this.edit(req, res, this._findOne(req))).then((context) => {
-          context = Object.assign(context, this.defaultContext(req))
+          context = Object.assign(this.defaultContext(req), context)
           return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
         })
       }
@@ -63,13 +69,13 @@ class EditController extends ViewController {
 
   edit(req, res, query) {
     return query.then((object) => {
-      return {object}
+      return {title: "Edit "+ this.displayName + (this.instanceTitleField ? ": " + object[this.instanceTitleField] : ''), object}
     })
   }
 
   _create(req, res) {
     Promise.resolve(this.create(req, res, {})).then((context) => {
-      context = Object.assign(context, this.defaultContext(req))
+      context = Object.assign(this.defaultContext(req), context)
       return templater.render(this.templatePrefix+"-create", context).then(::res.send)
     })
   }
@@ -83,11 +89,12 @@ class EditController extends ViewController {
    */
   
   create(req, res, object) {
-    return {object}
+    return {title: "Create " + this.displayName, object}
   }
 
   save(req, res) {
     let values = req.body
+    values = this._convertValues(values)
     let promise = values[this.idField]
       ? this.model.update(values[this.idField], values)
       : this.model.create(values)
@@ -103,6 +110,23 @@ class EditController extends ViewController {
         res.redirect(this.routePrefix+"/create")
       }
     }) 
+  }
+
+  _convertValues(values) {
+    let attrs = this._modelAttributes()
+    attrs.forEach((attr) => {
+      if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined')
+      if(attr.type == 'array') {
+        values[attr.name] = values[attr.name].split(',')
+      }
+      try {
+        if(attr.type == 'json' || attr.type == 'mixed') values[attr.name] = JSON.parse(values[attr.name])
+      } catch (e) {
+        this.log.error("Error processing json or mixed value of " + attr.name, e)
+        delete values[attr.name]
+      }
+    })
+    return values
   }
   
   remove(req, res) {

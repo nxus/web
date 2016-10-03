@@ -49,7 +49,6 @@ class ViewController extends HasModels {
     this.populate = options.populate || null
     this.routePrefix = options.routePrefix || '/' + this.prefix
     this.displayName = options.displayName || new.target.name
-    this.instanceTitleField = options.instanceTitleField || null
     this.paginationOptions = options.paginationOptions || {
       sortField: 'updatedAt',
       sortDirection: 'ASC',
@@ -57,6 +56,7 @@ class ViewController extends HasModels {
     }
     this.ignoreFields = options.ignoreFields || ['id', 'createdAt', 'updatedAt']
     this.displayFields = options.displayFields || []
+    this.instanceTitleField = options.instanceTitleField || this.displayFields.length > 0 ? this.displayFields[0] : null
     this.idField = options.idField || 'id'
 
     
@@ -123,6 +123,7 @@ class ViewController extends HasModels {
       attributes: this._modelAttributes(),
       displayName: this.displayName,
       base: this.routePrefix,
+      instanceUrl: this.routePrefix+"/view",
       idField: this.idField,
       title: this.displayName
     }
@@ -132,7 +133,7 @@ class ViewController extends HasModels {
 
   _list(req, res) {
     Promise.resolve(this.list(req, res, this._find(req))).then((context) => {
-      context = Object.assign(context, this.defaultContext(req))
+      context = Object.assign(this.defaultContext(req), context)
       return templater.render(this.templatePrefix+'-list', context).then(::res.send)
     })
   }
@@ -158,7 +159,7 @@ class ViewController extends HasModels {
         next()
       } else {
         return Promise.resolve(this.detail(req, res, this._findOne(req))).then((context) => {
-          context = Object.assign(context, this.defaultContext(req))
+          context = Object.assign(this.defaultContext(req), context)
           return templater.render(this.templatePrefix+'-detail', context).then(::res.send)
         })
       }
@@ -175,7 +176,7 @@ class ViewController extends HasModels {
    */
   detail(req, res, query) {
     return query.then((object) => {
-      return {object, title: this.displayName + ': ' + object[this.titleField]}
+      return {object, title: this.displayName + (this.instanceTitleField ? ': ' + object[this.instanceTitleField] : '')}
     })
   }
 

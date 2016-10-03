@@ -1,9 +1,14 @@
+<%- render("actions-buttons", {actions: actions.default, makeActionUrl: function(link) {return base + link }}) %>
+
 <table class="table table-stripped">
     <thead>
         <tr>
           <% attributes.forEach(function(attr) { %>
             <th><%= attr.label %></th>
           <% }) %>
+          <% if (actions.instance) { %>
+           <th></th>
+          <% } %>
         </tr>
     </thead>
     <tbody>
@@ -11,7 +16,7 @@
         <tr>
           <% attributes.forEach(function(attr) { %>
             <% if(attr.isTitle) { %>
-              <td><a href="<%=base%>/view/<%=u[idField]%>"><%if (u[attr.name]) { %><%=u[attr.name]%><% } else { %>[empty]<%}%></a></td>
+              <td><a href="<%=instanceUrl%>/<%=u[idField]%>"><%if (u[attr.name]) { %><%=u[attr.name]%><% } else { %>[empty]<%}%></a></td>
             <% } else if (attr.type == 'password') { %> <% return %>
             <% } else if (attr.type == 'boolean') { %>
             <td><%- u[attr.name] ? '<i class="fa fa-check"></i>' : '' %></td>
@@ -19,6 +24,11 @@
             <td><%= u[attr.name] %></td>
             <% } %>
           <% }) %>
+          <% if (actions.instance) { %>
+            <td class="bold">
+              <%- render("actions-icons", {actions: actions.instance, makeActionUrl: function(link) { return base + link + u[idField]}}) %>
+            </td>
+          <% } %>
         </tr>
       <% }) %>
     </tbody>   

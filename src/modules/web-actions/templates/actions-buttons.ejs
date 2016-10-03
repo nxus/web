@@ -1,0 +1,4 @@
+<% actions.forEach(function(action) { %>
+  <% action.fullLink = makeActionUrl(action.link) %>
+  <%- render(action.template, {action})%>
+<% }) %>
