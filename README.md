@@ -25,6 +25,7 @@ You can pass any of the following into the constructor options argument:
 -   `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
 -   `routePrefix` - defaults to '/'+`prefix`
 -   `pageTemplate` - the layout to use to render the page
+-   `populate` - relationships to populate on find
 -   `displayName` - defaults to class name
 -   `instanceTitleField` - defaults to first attribute
 -   `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
