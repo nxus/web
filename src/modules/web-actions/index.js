@@ -40,6 +40,7 @@ class WebActions extends NxusModule {
    * @param {Object} options (icon, css, group)
    */
   add(template, label, link, options) {
+    this.log.debug("Adding action", label, link, "for", template)
     if(!this._actions[template]) {
       this._actions[template] = []
       templater.on('renderContext.'+template, (args) => {
