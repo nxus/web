@@ -1,4 +1,6 @@
+<% if (typeof actions != 'undefined') { %>
 <%- render("actions-buttons", {actions: actions.default, makeActionUrl: function(link) {return base + link }}) %>
+<% } %>
 
 <table class="table table-stripped">
     <thead>
@@ -6,7 +8,7 @@
           <% attributes.forEach(function(attr) { %>
             <th><%= attr.label %></th>
           <% }) %>
-          <% if (actions.instance) { %>
+          <% if (typeof actions != "undefined" && actions.instance) { %>
            <th></th>
           <% } %>
         </tr>
@@ -24,7 +26,7 @@
             <td><%= u[attr.name] %></td>
             <% } %>
           <% }) %>
-          <% if (actions.instance) { %>
+          <% if (typeof actions != "undefined" && actions.instance) { %>
             <td class="bold">
               <%- render("actions-icons", {actions: actions.instance, makeActionUrl: function(link) { return base + link + u[idField]}}) %>
             </td>
