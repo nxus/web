@@ -1,4 +1,3 @@
-<% actions.forEach(function(action) { %>
-  <% action.fullLink = makeActionUrl(action.link) %>
-  <%- render(action.templateMinimal, {action}) %>
+<% actions.forEach(function(a) { %>
+  <%- render(a.templateMinimal, {action: Object.assign({}, a, {fullLink: makeActionUrl(a.link)})}) %>
 <% }) %>
