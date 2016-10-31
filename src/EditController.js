@@ -52,8 +52,10 @@ class EditController extends ViewController {
         next()
       } else {
         Promise.resolve(this.edit(req, res, this._findOne(req))).then((context) => {
-          context = Object.assign(this.defaultContext(req), context)
-          return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
+          return this.defaultContext(req).then((defaultContext) => {
+            context = Object.assign(defaultContext, context)
+            return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
+          })
         })
       }
     })
@@ -75,8 +77,10 @@ class EditController extends ViewController {
 
   _create(req, res) {
     Promise.resolve(this.create(req, res, {})).then((context) => {
-      context = Object.assign(this.defaultContext(req), context)
-      return templater.render(this.templatePrefix+"-create", context).then(::res.send)
+      return this.defaultContext(req).then((defaultContext) => {
+        context = Object.assign(defaultContext, context)
+        return templater.render(this.templatePrefix+"-create", context).then(::res.send)
+      })
     })
   }
 
@@ -94,39 +98,41 @@ class EditController extends ViewController {
 
   save(req, res) {
     let values = req.body
-    values = this._convertValues(values)
-    let promise = values[this.idField]
-      ? this.model.update(values[this.idField], values)
-      : this.model.create(values)
-    promise.then((inst) => {
-      req.flash('info', this.displayName + " saved")
-      res.redirect(this.routePrefix)
-    }).catch((e) => {
-      this.log.error(e)
-      req.flash('error', "Error saving "+this.displayName+": "+e)
-      if (values.id) {
-        res.redirect(this.routePrefix+"/edit/"+values[this.idField])
-      } else {
-        res.redirect(this.routePrefix+"/create")
-      }
-    }) 
+    this._convertValues(values).then((values) => { 
+      let promise = values[this.idField]
+        ? this.model.update(values[this.idField], values)
+        : this.model.create(values)
+      promise.then((inst) => {
+        req.flash('info', this.displayName + " saved")
+        res.redirect(this.routePrefix)
+      }).catch((e) => {
+        this.log.error(e)
+        req.flash('error', "Error saving "+this.displayName+": "+e)
+        if (values.id) {
+          res.redirect(this.routePrefix+"/edit/"+values[this.idField])
+        } else {
+          res.redirect(this.routePrefix+"/create")
+        }
+      }) 
+    })
   }
 
   _convertValues(values) {
-    let attrs = this._modelAttributes()
-    attrs.forEach((attr) => {
-      if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined')
-      if(attr.type == 'array') {
-        values[attr.name] = values[attr.name].split(',')
-      }
-      try {
-        if(attr.type == 'json' || attr.type == 'mixed') values[attr.name] = JSON.parse(values[attr.name])
-      } catch (e) {
-        this.log.error("Error processing json or mixed value of " + attr.name, e)
-        delete values[attr.name]
-      }
+    return this._modelAttributes().then((attrs) => {
+      attrs.forEach((attr) => {
+        if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined')
+        if(attr.type == 'array') {
+          values[attr.name] = values[attr.name].split(',')
+        }
+        try {
+          if(attr.type == 'json' || attr.type == 'mixed') values[attr.name] = JSON.parse(values[attr.name])
+        } catch (e) {
+          this.log.error("Error processing json or mixed value of " + attr.name, e)
+          delete values[attr.name]
+        }
+      })
+      return values
     })
-    return values
   }
   
   remove(req, res) {

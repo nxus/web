@@ -117,24 +117,28 @@ class ViewController extends HasModels {
   }
 
   defaultContext(req) {
-    return {
-      req: req,
-      pagination: this._paginationState(req),
-      attributes: this._modelAttributes(),
-      displayName: this.displayName,
-      base: this.routePrefix,
-      instanceUrl: this.routePrefix+"/view",
-      idField: this.idField,
-      title: this.displayName
-    }
+    return this._modelAttributes().then((attributes) => {
+      return {
+        req: req,
+        pagination: this._paginationState(req),
+        attributes,
+        displayName: this.displayName,
+        base: this.routePrefix,
+        instanceUrl: this.routePrefix+"/view",
+        idField: this.idField,
+        title: this.displayName
+      }
+    })
   }
   
   // Routes
 
   _list(req, res) {
-    Promise.resolve(this.list(req, res, this._find(req))).then((context) => {
-      context = Object.assign(this.defaultContext(req), context)
-      return templater.render(this.templatePrefix+'-list', context).then(::res.send)
+    return Promise.resolve(this.list(req, res, this._find(req))).then((context) => {
+      return this.defaultContext(req).then((defaultContext) => {
+        context = Object.assign(defaultContext, context)
+        return templater.render(this.templatePrefix+'-list', context).then(::res.send)
+      })
     })
   }
 
@@ -202,8 +206,9 @@ class ViewController extends HasModels {
         ret.type = 'enum'
         ret.opts = ret.enum
       }
-      if(ret.model) {
+      if(ret.model || ret.collection) {
         ret.type = 'related'
+        if(ret.collection) ret.multiple = true
         related.push(ret)
       }
       return ret
@@ -219,12 +224,12 @@ class ViewController extends HasModels {
       if(!ret) ret = ignoreType.includes(k.type)
       return !ret
     })
-    if (!withRelated || _.isEmpty(related)) {
-      return attrs
-    } /* TODO clean this up
-        else {
+    if (_.isEmpty(related)) {
+      return Promise.resolve(attrs)
+    } else {
       return Promise.map(related, (rel) => {
-        return this.app.get('storage').getModel(rel.model).then((m) => {
+        let model = rel.model || rel.collection
+        return storage.getModel(model).then((m) => {
           return m.find()
         }).then((relInsts) => {
           rel.instances = relInsts
@@ -233,7 +238,7 @@ class ViewController extends HasModels {
         return attrs
       })
     }
-    */
+    
   }
 
   _sanitizeAttributeName(string) {
