@@ -1,6 +1,7 @@
 import path from 'path'
 import morph from 'morph'
 import _ from 'underscore'
+import Promise from 'bluebird'
 import {application} from 'nxus-core'
 import {templater} from 'nxus-templater'
 import {router} from 'nxus-router'
@@ -116,24 +117,29 @@ class ViewController extends HasModels {
     return find
   }
 
-  defaultContext(req) {
-    return {
-      req: req,
-      pagination: this._paginationState(req),
-      attributes: this._modelAttributes(),
-      displayName: this.displayName,
-      base: this.routePrefix,
-      instanceUrl: this.routePrefix+"/view",
-      idField: this.idField,
-      title: this.displayName
-    }
+  defaultContext(req, related=false) {
+    return this._modelAttributes(related).then((attrs) => {
+      return {
+        req: req,
+        pagination: this._paginationState(req),
+        attributes: attrs,
+        displayName: this.displayName,
+        base: this.routePrefix,
+        instanceUrl: this.routePrefix+"/view",
+        idField: this.idField,
+        title: this.displayName
+      }
+    })
   }
   
   // Routes
 
   _list(req, res) {
-    Promise.resolve(this.list(req, res, this._find(req))).then((context) => {
-      context = Object.assign(this.defaultContext(req), context)
+    Promise.all([
+      this.list(req, res, this._find(req)),
+      this.defaultContext(req)
+    ]).spread((context, defaultContext) => {
+      context = Object.assign(defaultContext, context)
       return templater.render(this.templatePrefix+'-list', context).then(::res.send)
     })
   }
@@ -158,8 +164,11 @@ class ViewController extends HasModels {
         res.status(404)
         next()
       } else {
-        return Promise.resolve(this.detail(req, res, this._findOne(req))).then((context) => {
-          context = Object.assign(this.defaultContext(req), context)
+        return Promise.all([
+          this.detail(req, res, this._findOne(req)),
+          this.defaultContext(req)
+        ]).spread((context, defaultContext) => {
+          context = Object.assign(defaultContext, context)
           return templater.render(this.templatePrefix+'-detail', context).then(::res.send)
         })
       }
@@ -206,6 +215,10 @@ class ViewController extends HasModels {
         ret.type = 'related'
         related.push(ret)
       }
+      if(ret.collection) {
+        ret.type = 'related-many'
+        related.push(ret)
+      }
       return ret
     })    
     .filter((k) => {
@@ -220,12 +233,15 @@ class ViewController extends HasModels {
       return !ret
     })
     if (!withRelated || _.isEmpty(related)) {
-      return attrs
-    } /* TODO clean this up
-        else {
+      return Promise.resolve(attrs)
+    } else {
       return Promise.map(related, (rel) => {
-        return this.app.get('storage').getModel(rel.model).then((m) => {
-          return m.find()
+        return storage.getModel(rel.model || rel.collection).then((m) => {
+          let ret = m.find()
+          if (m.defaultSort) {
+            ret = ret.sort(m.defaultSort())
+          }
+          return ret
         }).then((relInsts) => {
           rel.instances = relInsts
         })
@@ -233,7 +249,6 @@ class ViewController extends HasModels {
         return attrs
       })
     }
-    */
   }
 
   _sanitizeAttributeName(string) {

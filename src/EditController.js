@@ -37,10 +37,11 @@ class EditController extends ViewController {
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
   }
 
-  defaultContext(req) {
-    let ret = super.defaultContext(req)
-    ret.instanceUrl = this.routePrefix+"/edit"
-    return ret
+  defaultContext(req, related=false) {
+    return super.defaultContext(req, related).then((ret) => {
+      ret.instanceUrl = this.routePrefix+"/edit"
+      return ret
+    })
   }
 
   // Routes
@@ -51,8 +52,17 @@ class EditController extends ViewController {
         res.status(404)
         next()
       } else {
-        Promise.resolve(this.edit(req, res, this._findOne(req))).then((context) => {
-          context = Object.assign(this.defaultContext(req), context)
+        this.defaultContext(req, true).then((defaultContext) => {
+          let finder = this._findOne(req)
+          _.filter(defaultContext.attributes, (attr) => {
+            return attr.type == 'related-many'
+          }).forEach((attr) => {
+            finder = finder.populate(attr.name)
+          })
+          return this.edit(req, res, finder).then((context) => {
+            return Object.assign(defaultContext, context)
+          })
+        }).then((context) => {
           return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
         })
       }
@@ -74,8 +84,11 @@ class EditController extends ViewController {
   }
 
   _create(req, res) {
-    Promise.resolve(this.create(req, res, {})).then((context) => {
-      context = Object.assign(this.defaultContext(req), context)
+    return Promise.all([
+      this.create(req, res, {}),
+      this.defaultContext(req)
+    ]).spread((context, defaultContext) => {
+      context = Object.assign(defaultContext, context)
       return templater.render(this.templatePrefix+"-create", context).then(::res.send)
     })
   }
@@ -94,13 +107,35 @@ class EditController extends ViewController {
 
   save(req, res) {
     let values = req.body
-    values = this._convertValues(values)
-    let promise = values[this.idField]
-      ? this.model.update(values[this.idField], values)
+    this.convertValues(values).spread((values, related) => {
+      return (values[this.idField]
+      ? this.model.update(values[this.idField], values).then((is) => {return is[0]})
       : this.model.create(values)
-    promise.then((inst) => {
-      req.flash('info', this.displayName + " saved")
-      res.redirect(this.routePrefix)
+      ).then((inst) => {
+        let find = this.model.findOne(inst.id)
+        for (let k in related) {
+          find = find.populate(k)
+        }
+        return find
+      }).then((inst) => {
+        for (let k in related) {
+          let added = related[k]
+          for (let ex of inst[k]) {
+            if (added.includes(ex.id)) {
+              added = _.without(added, ex.id)
+            } else {
+              inst[k].remove(ex.id)
+            }
+          }
+          for (let i of added) {
+            inst[k].add(i)
+          }
+        }
+        return inst.save()
+      }).then((inst) => {
+        req.flash('info', this.displayName + " saved")
+        res.redirect(this.routePrefix)
+      })
     }).catch((e) => {
       this.log.error(e)
       req.flash('error', "Error saving "+this.displayName+": "+e)
@@ -112,22 +147,27 @@ class EditController extends ViewController {
     }) 
   }
 
-  _convertValues(values) {
-    let attrs = this._modelAttributes()
-
-    attrs.forEach((attr) => {
-      if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined' && values[attr.name])
-      if(attr.type == 'array') {
-        values[attr.name] = values[attr.name].split(',')
-      }
-      try {
-        if(attr.type == 'json' || attr.type == 'mixed') values[attr.name] = JSON.parse(values[attr.name])
-      } catch (e) {
-        this.log.error("Error processing json or mixed value of " + attr.name, e)
-        delete values[attr.name]
-      }
+  convertValues(values) {
+    return this._modelAttributes(false).then((attrs) => {
+      let relatedValues = {}
+      attrs.forEach((attr) => {
+        if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined' && values[attr.name])
+        if(attr.type == 'array' && _.isString(values[attr.name])) {
+          values[attr.name] = values[attr.name].split(',')
+        }
+        try {
+          if(attr.type == 'json' || attr.type == 'mixed') values[attr.name] = JSON.parse(values[attr.name])
+        } catch (e) {
+          this.log.error("Error processing json or mixed value of " + attr.name, e)
+          delete values[attr.name]
+        }
+        if(attr.type == 'related-many') {
+          relatedValues[attr.name] = _.isArray(values[attr.name]) ? values[attr.name] : [values[attr.name]]
+          delete values[attr.name]
+        }
+      })
+      return [values, relatedValues]
     })
-    return values
   }
   
   remove(req, res) {
