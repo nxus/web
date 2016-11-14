@@ -153,7 +153,7 @@ class EditController extends ViewController {
       attrs.forEach((attr) => {
         if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined' && values[attr.name])
         if(attr.type == 'array' && _.isString(values[attr.name])) {
-          values[attr.name] = values[attr.name].split(',')
+          values[attr.name] = values[attr.name].split('\r\n')
         }
         try {
           if(attr.type == 'json' || attr.type == 'mixed') values[attr.name] = JSON.parse(values[attr.name])
