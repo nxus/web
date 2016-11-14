@@ -137,8 +137,10 @@ class ViewController extends HasModels {
   _list(req, res) {
     Promise.all([
       this.list(req, res, this._find(req)),
-      this.defaultContext(req)
-    ]).spread((context, defaultContext) => {
+      this.defaultContext(req),
+      this.model.count()
+    ]).spread((context, defaultContext, count) => {
+      defaultContext.pagination.count = count
       context = Object.assign(defaultContext, context)
       return templater.render(this.templatePrefix+'-list', context).then(::res.send)
     })
