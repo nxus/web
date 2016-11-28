@@ -1,10 +1,10 @@
 <div class="form-group">
     <label class="col-sm-3 to-right" for="control_<%= name %>"><%= label %></label>
     <div class="col-sm-7">
-      <select id="control_<%= name %>" class="form-control" name="<%= name %>">
+      <select multiple id="control_<%= name %>" class="form-control" name="<%= name %>" size="10">
       <% if(typeof instances != "undefined") { %>
         <% instances.forEach(function(i) { %>
-          <option value="<%=i.id%>" <% if (value == i.id) { %>selected<% } %>><%= i.displayName() %></option>
+          <option value="<%=i.id%>" <% if (_.any(value, function(x) {return x.id==i.id})) { %>selected<% } %>><%= i.displayName() %></option>
         <% }) %>
       <% } %>
       </select>
