@@ -26,7 +26,6 @@ class Nav extends NxusModule {
       options.subMenu = this._createMenu(options.subMenu)
     }
     let existing = this._menus[menu].filter((x) => {return x.label == label})
-    if (menu == 'admin-sidebar') console.log(existing, label, this._menus[menu])
     if (!existing.length) {
       this._menus[menu].push({label, link, ...options})
     }
