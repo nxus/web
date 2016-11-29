@@ -39,6 +39,10 @@ class ViewController extends HasModels {
     let _modelIdentity = options.modelIdentity || morph.toSnake(new.target.name)
     if (!options.modelNames) {
       options.modelNames = [_modelIdentity]
+    } else if (_.isArray(options.modelNames) && !options.modelNames.includes(_modelIdentity)) {
+      options.modelNames.push(_modelIdentity)
+    } else if (_.isObject(options.modelNames) && !options.modelNames[_modelIdentity]) {
+      options.modelNames[_modelIdentity] = _modelIdentity
     }
     
     super(options)

@@ -40,5 +40,16 @@ describe("ViewController", () => {
       t.prefix.should.equal('custom')
       t.templatePrefix.should.equal('custom')
     })
+
+    it("should always include modelIdentity in modelNames", () => {
+      let t = new ThingTwo({modelIdentity: 'other', modelNames: ['two']})
+      t._modelNames.should.contain('other')
+      t._modelNames.should.contain('two')
+    })
+    it("should always include modelIdentity in modelNames if object", () => {
+      let t = new ThingTwo({modelIdentity: 'other', modelNames: {'two': 'Two'}})
+      t._modelNames.should.have.property('other')
+      t._modelNames.should.have.property('two')
+    })
   })
 })
