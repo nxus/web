@@ -24,8 +24,11 @@ class Nav extends NxusModule {
     menu = this._createMenu(menu)
     if(options.subMenu) {
       options.subMenu = this._createMenu(options.subMenu)
-    } 
-    this._menus[menu].push({label, link, ...options})
+    }
+    let existing = this._menus[menu].filter((x) => {return x.label == label})
+    if (!existing.length) {
+      this._menus[menu].push({label, link, ...options})
+    }
   }
 
   /**
@@ -50,13 +53,14 @@ class Nav extends NxusModule {
 
   _createMenu(menu) {
     menu = morph.toDashed(menu)
-    this.log.debug('Registering Nav Menu', menu)
     if (!this._menus[menu]) {
+      this.log.debug('Registering Nav Menu', menu)
       this._menus[menu] = []
+      templater.templateFunction(menu, (opts) => {
+        var template = opts.subTemplate || 'nav-menu'
+        return templater.render(template, {menu, items: this.get(menu), ...opts})
+      })
     }
-    templater.templateFunction(menu, (opts) => {
-      return templater.render('nav-menu', {menu, items: this.get(menu), ...opts})
-    })
     return menu
   }
 }
