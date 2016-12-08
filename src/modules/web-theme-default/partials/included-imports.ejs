@@ -1,0 +1,5 @@
+     <% if (typeof imports != 'undefined' && imports.length) { %>
+       <% imports.forEach(function(i) { %>
+     <link rel="import" href="<%=i%>" />
+       <% }) %>
+     <% } %>
