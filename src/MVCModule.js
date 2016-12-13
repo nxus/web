@@ -32,7 +32,7 @@ class MVCModule extends HasModels {
     
     templater.templateDir(this._dirName+"/templates/*.ejs", "page")
 
-    this._loadControllers()
+    application.onceAfter('init', ::this._loadControllers)
   }
 
   _loadControllers() {
@@ -53,7 +53,7 @@ class MVCModule extends HasModels {
         this._controllers.push(new m())
       }
     })
-  }  
+  }
   
 }
 
