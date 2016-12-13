@@ -25,15 +25,14 @@ const REGEX_FILE = /[^\/\~]$/;
 
 class MVCModule extends HasModels {
 
-  constructor() {
-    super()
+  constructor(options={}) {
+    super(options)
 
     this._controllers = []
-    this._model_identities = []
     
     templater.templateDir(this._dirName+"/templates/*.ejs", "page")
 
-    this._loadControllers()
+    application.onceAfter('init', ::this._loadControllers)
   }
 
   _loadControllers() {
@@ -54,7 +53,7 @@ class MVCModule extends HasModels {
         this._controllers.push(new m())
       }
     })
-  }  
+  }
   
 }
 
