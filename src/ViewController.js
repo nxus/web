@@ -24,6 +24,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
  *  * `ignoreFields` - blacklist of fields to ignore in display
  *  * `displayFields` - whitelist of fields to display
+ *  * `listFields` - subset of fields to show on list view
  *  * `idField` - field to use for id in routes
  * 
  * # Implement Routes
@@ -61,6 +62,7 @@ class ViewController extends HasModels {
     }
     this.ignoreFields = options.ignoreFields || ['id', 'createdAt', 'updatedAt']
     this.displayFields = options.displayFields || []
+    this.listFields = options.listFields || []
     this.instanceTitleField = options.instanceTitleField || this.displayFields.length > 0 ? this.displayFields[0] : null
     this.idField = options.idField || 'id'
 
@@ -145,6 +147,9 @@ class ViewController extends HasModels {
       this.model.count()
     ]).spread((context, defaultContext, count) => {
       defaultContext.pagination.count = count
+      if (this.listFields.length > 0) {
+        defaultContext.attributes = defaultContext.attributes.filter(x => this.listFields.includes(x.name))
+      }
       context = Object.assign(defaultContext, context)
       return templater.render(this.templatePrefix+'-list', context).then(::res.send)
     })
