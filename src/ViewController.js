@@ -210,7 +210,7 @@ class ViewController extends HasModels {
     let attrs = _(model._attributes)
     .keys()
     .map((k, i) => {
-      let ret = model._attributes[k]
+      let ret = {...model._attributes[k]}
       ret.name = k
       if(titleField == null && i ==0) {
         ret.isTitle = true
