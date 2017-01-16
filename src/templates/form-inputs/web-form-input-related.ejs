@@ -2,6 +2,7 @@
     <label class="col-sm-3 to-right" for="control_<%= name %>"><%= label %></label>
     <div class="col-sm-7">
       <select id="control_<%= name %>" class="form-control" name="<%= name %>">
+      <% if (value && value.id) { value = value.id } // handle populated values %>
       <% if(typeof instances != "undefined") { %>
         <% instances.forEach(function(i) { %>
           <option value="<%=i.id%>" <% if (value == i.id) { %>selected<% } %>><%= i.displayName() %></option>
