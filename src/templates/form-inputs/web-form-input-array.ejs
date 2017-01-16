@@ -1,6 +1,6 @@
 <div class="form-group">
     <label class="col-sm-3 to-right" for="control_<%= name %>"><%= label %> (array)</label>
     <div class="col-sm-7">
-        <textarea rows="10" style="min-height: 100px;" id="control_<%= name %>" class="form-control" placeholder="Enter <%= label %> as list one item per line" name="<%= name %>"><%= value && value.length ? value.join("\n") : value %></textarea>
+        <textarea rows="10" style="min-height: 100px;" id="control_<%= name %>" class="form-control" placeholder="Enter <%= label %> as list one item per line" name="<%= name %>"><%= value && value.join ? value.join("\n") : value %></textarea>
     </div>
 </div>
