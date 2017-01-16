@@ -31,6 +31,7 @@ You can pass any of the following into the constructor options argument:
 -   `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
 -   `ignoreFields` - blacklist of fields to ignore in display
 -   `displayFields` - whitelist of fields to display
+-   `listFields` - subset of fields to show on list view
 -   `idField` - field to use for id in routes
 
 ## Implement Routes
