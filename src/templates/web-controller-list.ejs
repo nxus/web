@@ -6,7 +6,9 @@
     <thead>
         <tr>
           <% attributes.forEach(function(attr) { %>
-            <th><%= attr.label %></th>
+            <th><%= attr.label %>
+              <a href="?sort=<%=attr.name%>&dir=<%=pagination.sortDirection.toLowerCase()=="asc" ? "desc" : "asc"%>"><i class="fa fa-sort<%if(pagination.sortField==attr.name) {%><%= pagination.sortDirection.toLowerCase() == 'asc' ? "-asc" : "-desc"  %> <%}%>"></i></a>
+            </th>
           <% }) %>
           <% if (typeof actions != "undefined" && actions.instance) { %>
            <th></th>
