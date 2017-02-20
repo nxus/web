@@ -52,7 +52,10 @@ class ViewController extends HasModels {
     this.prefix = options.prefix || morph.toDashed(new.target.name)
     this.templatePrefix = options.templatePrefix || this.prefix
     this.pageTemplate = options.pageTemplate || 'page'
-    this.populate = options.populate || null
+    this.populate = options.populate || []
+    if (!_.isArray(this.populate)) {
+      this.populate = [this.populate]
+    }
     this.routePrefix = options.routePrefix || '/' + this.prefix
     this.displayName = options.displayName || new.target.name
     this.paginationOptions = options.paginationOptions || {
@@ -107,8 +110,11 @@ class ViewController extends HasModels {
       .sort(pageOptions.sortField + ' ' + pageOptions.sortDirection)
       .limit(pageOptions.itemsPerPage)
       .skip((pageOptions.currentPage-1)*pageOptions.itemsPerPage)
-    if (this.populate) {
-      find.populate(this.populate)
+    if (this.populate.length) {
+      for (let p of this.populate) {
+        if (!_.isArray(p)) p = [p]
+        find.populate.apply(find, p)
+      }
     }
     return find
   }
