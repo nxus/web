@@ -31,7 +31,7 @@ class EditController extends ViewController {
     router.route("POST", routePrefix+"/delete/:id", ::this.remove)
 
     this.redirectAfterCreate = options.redirectAfterCreate || ""
-    this.redirectAfterEdit = options.redirectAfterEdit || "/create"
+    this.redirectAfterEdit = options.redirectAfterEdit || ""
     this.redirectAfterDelete = options.redirectAfterDelete || ""
     
     // Yes, these should be __dirname not local to the subclass
