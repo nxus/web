@@ -123,8 +123,11 @@ class ViewController extends HasModels {
     let query = {}
     query[this.idField] = req.params.id
     let find =  this.model.findOne(query)
-    if (this.populate) {
-      find.populate(this.populate)
+    if (this.populate.length) {
+      for (let p of this.populate) {
+        if (!_.isArray(p)) p = [p]
+        find.populate.apply(find, p)
+      }
     }
     return find
   }
