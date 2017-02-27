@@ -11,6 +11,10 @@ import ViewController from './ViewController'
  * 
  * # Parameters
  *  See Controller docs
+ *  * `redirectAfterCreate` - path suffix to routePrefix after route
+ *  * `redirectAfterEdit` - path suffix to routePrefix after route
+ *  * `redirectAfterDelete` - path suffix to routePrefix after route
+ * 
  * 
  * # Implement Routes
  * 
@@ -41,6 +45,13 @@ class EditController extends ViewController {
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
   }
 
+  /*
+  * Override to modify the routes used for redirects, links.
+  * Useful to replace extra route `:params` in `this.routePrefix`.
+  * @param {Request} req The express req object
+  * @param {String} route The route to be updated
+  * @returns {String} The route to be used
+  */
   routeForRequest(req, route) {
     return route
   }
