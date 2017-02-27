@@ -66,7 +66,7 @@ class ViewController extends HasModels {
     this.ignoreFields = options.ignoreFields || ['id', 'createdAt', 'updatedAt']
     this.displayFields = options.displayFields || []
     this.listFields = options.listFields || []
-    this.instanceTitleField = options.instanceTitleField || this.displayFields.length > 0 ? this.displayFields[0] : null
+    this.instanceTitleField = options.instanceTitleField || (this.displayFields.length > 0 ? this.displayFields[0] : null)
     this.idField = options.idField || 'id'
 
     
