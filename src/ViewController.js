@@ -110,11 +110,9 @@ class ViewController extends HasModels {
       .sort(pageOptions.sortField + ' ' + pageOptions.sortDirection)
       .limit(pageOptions.itemsPerPage)
       .skip((pageOptions.currentPage-1)*pageOptions.itemsPerPage)
-    if (this.populate.length) {
-      for (let p of this.populate) {
-        if (!_.isArray(p)) p = [p]
-        find.populate.apply(find, p)
-      }
+    for (let p of this.populate) {
+      if (!_.isArray(p)) p = [p]
+      find.populate(...p)
     }
     return find
   }
@@ -123,11 +121,9 @@ class ViewController extends HasModels {
     let query = {}
     query[this.idField] = req.params.id
     let find =  this.model.findOne(query)
-    if (this.populate.length) {
-      for (let p of this.populate) {
-        if (!_.isArray(p)) p = [p]
-        find.populate.apply(find, p)
-      }
+    for (let p of this.populate) {
+      if (!_.isArray(p)) p = [p]
+      find.populate(...p)
     }
     return find
   }

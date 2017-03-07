@@ -45,6 +45,16 @@ class EditController extends ViewController {
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
   }
 
+  /** Replaces route parameters with values.
+   * @param {string} route route path
+   * @param {Object} params parameter replacements
+   * @returns {string} route path, with parameters replaced
+   */
+  static replaceRouteParams(route, params) {
+    _.each(params, (val, key) => { route = route.replace(":" + key, val) })
+    return route
+  }
+  
   /*
   * Override to modify the routes used for redirects, links.
   * Useful to replace extra route `:params` in `this.routePrefix`.
