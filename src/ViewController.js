@@ -23,7 +23,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `instanceTitleField` - defaults to first attribute
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
  *  * `ignoreFields` - blacklist of fields to ignore in display
- *  * `displayFields` - whitelist of fields to display
+ *  * `displayFields` - whitelist of fields to display, show in this order if supplied
  *  * `listFields` - subset of fields to show on list view
  *  * `idField` - field to use for id in routes
  * 
