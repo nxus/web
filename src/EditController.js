@@ -86,7 +86,7 @@ class EditController extends ViewController {
   _create(req, res) {
     return Promise.all([
       this.create(req, res, {}),
-      this.defaultContext(req)
+      this.defaultContext(req, true)
     ]).spread((context, defaultContext) => {
       context = Object.assign(defaultContext, context)
       return templater.render(this.templatePrefix+"-create", context).then(::res.send)

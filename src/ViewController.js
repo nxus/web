@@ -124,7 +124,7 @@ class ViewController extends HasModels {
   }
 
   defaultContext(req, related=false) {
-    return this._modelAttributes(related).then((attrs) => {
+    return this._modelAttributes(related, req).then((attrs) => {
       return {
         req: req,
         pagination: this._paginationState(req),
@@ -200,7 +200,19 @@ class ViewController extends HasModels {
     })
   }
 
-  _modelAttributes(withRelated=false) {
+  /*
+  * Override to modify the related objects find for related attributes
+  * Use this to filter by user
+  * @param {String} modelName 
+  * @param {Object} find default find() for the related model (returned unmodified by default)
+  * @param {Request} req The express req object
+  * @returns {Object) the find() to use
+  */
+  relatedInstances(modelName, find, req) {
+    return find
+  }
+
+  _modelAttributes(withRelated=false, req=null) {
     let model = this.model
     let ignore = this.ignoreFields
     let display = this.displayFields
@@ -233,26 +245,24 @@ class ViewController extends HasModels {
       return ret
     })    
     .filter((k) => {
-      if(display.length > 0)
-        return display.includes(k.name)
-      else
-        return true
-    })
-    .filter((k) => {
       let ret = ignore.includes(k.name) 
       if(!ret) ret = ignoreType.includes(k.type)
       return !ret
     })
+    if (display.length > 0) {
+      attrs = display.map((x) => { return attrs.find(a => a.name == x) })
+    }
     if (!withRelated || _.isEmpty(related)) {
       return Promise.resolve(attrs)
     } else {
       return Promise.map(related, (rel) => {
-        return storage.getModel(rel.model || rel.collection).then((m) => {
+        let modelName = rel.model || rel.collection
+        return storage.getModel(modelName).then((m) => {
           let ret = m.find()
           if (m.defaultSort) {
             ret = ret.sort(m.defaultSort())
           }
-          return ret
+          return this.relatedInstances(modelName, ret, req)
         }).then((relInsts) => {
           rel.instances = relInsts
         })
