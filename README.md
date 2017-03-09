@@ -25,12 +25,12 @@ You can pass any of the following into the constructor options argument:
 -   `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
 -   `routePrefix` - defaults to '/'+`prefix`
 -   `pageTemplate` - the layout to use to render the page
--   `populate` - relationships to populate on find
+-   `populate` - relationships to populate on find. Accepts a string, array, or array of [rel, options] arrays.
 -   `displayName` - defaults to class name
 -   `instanceTitleField` - defaults to first attribute
 -   `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
 -   `ignoreFields` - blacklist of fields to ignore in display
--   `displayFields` - whitelist of fields to display
+-   `displayFields` - whitelist of fields to display, show in this order if supplied
 -   `listFields` - subset of fields to show on list view
 -   `idField` - field to use for id in routes
 
@@ -73,6 +73,10 @@ A base class for CRUD routes and templates for a model
 
  See Controller docs
 
+-   `redirectAfterCreate` - path suffix to routePrefix after route
+-   `redirectAfterEdit` - path suffix to routePrefix after route
+-   `redirectAfterDelete` - path suffix to routePrefix after route
+
 ## Implement Routes
 
 The default implementation of the routes handles querying for the model instance, pagination, and the template rendering. See the specific method documentation for each public view function.
@@ -100,6 +104,17 @@ Implement the create route. Return the context for template `templatePrefix-crea
 -   `object` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** An empty object for setting defaults for the template
 
 Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
+
+### replaceRouteParams
+
+Replaces route parameters with values.
+
+**Parameters**
+
+-   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** route path
+-   `params` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** parameter replacements
+
+Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** route path, with parameters replaced
 
 ## add
 
