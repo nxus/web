@@ -11,6 +11,10 @@ import ViewController from './ViewController'
  * 
  * # Parameters
  *  See Controller docs
+ *  * `redirectAfterCreate` - path suffix to routePrefix after route
+ *  * `redirectAfterEdit` - path suffix to routePrefix after route
+ *  * `redirectAfterDelete` - path suffix to routePrefix after route
+ * 
  * 
  * # Implement Routes
  * 
@@ -20,7 +24,7 @@ import ViewController from './ViewController'
  */
 
 class EditController extends ViewController {
-  constructor(options) {
+  constructor(options={}) {
     super(options)
 
     let routePrefix = this.routePrefix
@@ -30,6 +34,10 @@ class EditController extends ViewController {
     router.route("POST", routePrefix+"/edit/:id", ::this.save)
     router.route("POST", routePrefix+"/delete/:id", ::this.remove)
 
+    this.redirectAfterCreate = options.redirectAfterCreate || ""
+    this.redirectAfterEdit = options.redirectAfterEdit || ""
+    this.redirectAfterDelete = options.redirectAfterDelete || ""
+    
     // Yes, these should be __dirname not local to the subclass
     // Subclass templates are expected to be loaded by MVCModule or manually?
     templater.default().template(__dirname+"/templates/web-controller-form.ejs", this.pageTemplate, this.templatePrefix+"-create")
@@ -37,9 +45,30 @@ class EditController extends ViewController {
     templater.default().template(__dirname+"/templates/web-controller-paginator.ejs")
   }
 
+  /** Replaces route parameters with values.
+   * @param {string} route route path
+   * @param {Object} params parameter replacements
+   * @returns {string} route path, with parameters replaced
+   */
+  static replaceRouteParams(route, params) {
+    _.each(params, (val, key) => { route = route.replace(":" + key, val) })
+    return route
+  }
+  
+  /*
+  * Override to modify the routes used for redirects, links.
+  * Useful to replace extra route `:params` in `this.routePrefix`.
+  * @param {Request} req The express req object
+  * @param {String} route The route to be updated
+  * @returns {String} The route to be used
+  */
+  routeForRequest(req, route) {
+    return route
+  }
+  
   defaultContext(req, related=false) {
     return super.defaultContext(req, related).then((ret) => {
-      ret.instanceUrl = this.routePrefix+"/edit"
+      ret.instanceUrl = this.routeForRequest(req, this.routePrefix+"/edit")
       return ret
     })
   }
@@ -131,18 +160,22 @@ class EditController extends ViewController {
             inst[k].add(i)
           }
         }
+        req.object = inst
         return inst.save()
       }).then((inst) => {
         req.flash('info', this.displayName + " saved")
-        res.redirect(this.routePrefix)
+        let redirect = this.routeForRequest(req, this.routePrefix + (values.id
+                                                                    ? this.redirectAfterEdit
+                                                                    : this.redirectAfterCreate))
+        res.redirect(redirect)
       })
     }).catch((e) => {
       this.log.error(e)
       req.flash('error', "Error saving "+this.displayName+": "+e)
       if (values.id) {
-        res.redirect(this.routePrefix+"/edit/"+values[this.idField])
+        res.redirect(this.routeForRequest(req, this.routePrefix+"/edit/"+values[this.idField]))
       } else {
-        res.redirect(this.routePrefix+"/create")
+        res.redirect(this.routeForRequest(req, this.routePrefix+"/create"))
       }
     }) 
   }
@@ -173,7 +206,7 @@ class EditController extends ViewController {
   remove(req, res) {
     return this.model.destroy(req.params.id).then((inst) => {
       req.flash('info', this.displayName + " deleted")
-      return res.redirect(this.routePrefix)
+      return res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
     })
   }  
 }

@@ -18,7 +18,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
  *  * `routePrefix` - defaults to '/'+`prefix`
  *  * `pageTemplate` - the layout to use to render the page
- *  * `populate` - relationships to populate on find
+ *  * `populate` - relationships to populate on find. Accepts a string, array, or array of [rel, options] arrays.
  *  * `displayName` - defaults to class name
  *  * `instanceTitleField` - defaults to first attribute
  *  * `paginationOptions` - object with `sortField`, `sortDirection`, and `itemsPerPage` keys.
@@ -52,7 +52,10 @@ class ViewController extends HasModels {
     this.prefix = options.prefix || morph.toDashed(new.target.name)
     this.templatePrefix = options.templatePrefix || this.prefix
     this.pageTemplate = options.pageTemplate || 'page'
-    this.populate = options.populate || null
+    this.populate = options.populate || []
+    if (!_.isArray(this.populate)) {
+      this.populate = [this.populate]
+    }
     this.routePrefix = options.routePrefix || '/' + this.prefix
     this.displayName = options.displayName || new.target.name
     this.paginationOptions = options.paginationOptions || {
@@ -63,7 +66,7 @@ class ViewController extends HasModels {
     this.ignoreFields = options.ignoreFields || ['id', 'createdAt', 'updatedAt']
     this.displayFields = options.displayFields || []
     this.listFields = options.listFields || []
-    this.instanceTitleField = options.instanceTitleField || this.displayFields.length > 0 ? this.displayFields[0] : null
+    this.instanceTitleField = options.instanceTitleField || (this.displayFields.length > 0 ? this.displayFields[0] : null)
     this.idField = options.idField || 'id'
 
     
@@ -107,8 +110,9 @@ class ViewController extends HasModels {
       .sort(pageOptions.sortField + ' ' + pageOptions.sortDirection)
       .limit(pageOptions.itemsPerPage)
       .skip((pageOptions.currentPage-1)*pageOptions.itemsPerPage)
-    if (this.populate) {
-      find.populate(this.populate)
+    for (let p of this.populate) {
+      if (!_.isArray(p)) p = [p]
+      find.populate(...p)
     }
     return find
   }
@@ -117,8 +121,9 @@ class ViewController extends HasModels {
     let query = {}
     query[this.idField] = req.params.id
     let find =  this.model.findOne(query)
-    if (this.populate) {
-      find.populate(this.populate)
+    for (let p of this.populate) {
+      if (!_.isArray(p)) p = [p]
+      find.populate(...p)
     }
     return find
   }
