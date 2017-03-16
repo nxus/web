@@ -184,7 +184,7 @@ class EditController extends ViewController {
     return this._modelAttributes(false).then((attrs) => {
       let relatedValues = {}
       attrs.forEach((attr) => {
-        if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined' && values[attr.name])
+        if(attr.type == 'boolean') values[attr.name] = (typeof values[attr.name] != 'undefined' && !!values[attr.name])
         if(attr.type == 'array' && _.isString(values[attr.name])) {
           values[attr.name] = values[attr.name].split('\r\n')
         }
