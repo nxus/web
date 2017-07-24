@@ -10,6 +10,8 @@ import {application as app, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
 import {templater} from 'nxus-templater'
 
+import htmlEscape from 'html-escape'
+
 class TemplateDefault extends NxusModule {
   constructor() {
     super()
@@ -26,7 +28,12 @@ class TemplateDefault extends NxusModule {
     router.default().staticRoute("/assets", __dirname+"/assets")
 
     templater.on('renderContext', () => {
-      return {siteName: app.config.siteName}
+      return {
+        siteName: app.config.siteName,
+        escapedJSON: function(o) {
+          if (o !== undefined) return htmlEscape(JSON.stringify(o))
+        }
+      }
     })
   }
 }
