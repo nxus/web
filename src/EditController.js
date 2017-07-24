@@ -1,5 +1,6 @@
 import morph from 'morph'
 import _ from 'underscore'
+import Promise from 'bluebird'
 import {application} from 'nxus-core'
 import {templater} from 'nxus-templater'
 import {router} from 'nxus-router'
