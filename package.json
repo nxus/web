@@ -1,6 +1,6 @@
 {
   "name": "nxus-web",
-  "version": "4.0.1-1",
+  "version": "4.0.1",
   "description": "Base theme, template, and MVC support for Nxus applications",
   "main": "lib",
   "scripts": {
@@ -30,10 +30,10 @@
     "glob": "^6.0.1",
     "html-escape": "^2.0.0",
     "morph": "^0.2.0",
-    "nxus-core": "^4.0.0-0",
-    "nxus-router": "^4.0.0-0",
-    "nxus-storage": "^4.0.0-0",
-    "nxus-templater": "^4.0.0-0",
+    "nxus-core": "^4.0.0",
+    "nxus-router": "^4.0.0",
+    "nxus-storage": "^4.0.0",
+    "nxus-templater": "^4.0.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
