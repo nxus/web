@@ -77,7 +77,7 @@ class EditController extends ViewController {
   // Routes
 
   _edit(req, res, next) {
-    this._findOne(req).then((object) => {
+    return this._findOne(req).then((object) => {
       if (!object) {
         res.status(404)
         next()
@@ -137,7 +137,7 @@ class EditController extends ViewController {
 
   save(req, res) {
     let values = req.body
-    this.convertValues(values).spread((values, related) => {
+    return this.convertValues(values).spread((values, related) => {
       return (values[this.idField]
       ? this.model.update(values[this.idField], values).then((is) => {return is[0]})
       : this.model.create(values)
@@ -165,20 +165,17 @@ class EditController extends ViewController {
         return inst.save()
       }).then((inst) => {
         req.flash('info', this.displayName + " saved")
-        let redirect = this.routeForRequest(req, this.routePrefix + (values.id
-                                                                    ? this.redirectAfterEdit
-                                                                    : this.redirectAfterCreate))
-        res.redirect(redirect)
       })
     }).catch((e) => {
       this.log.error(e)
       req.flash('error', "Error saving "+this.displayName+": "+e)
-      if (values.id) {
-        res.redirect(this.routeForRequest(req, this.routePrefix+"/edit/"+values[this.idField]))
-      } else {
-        res.redirect(this.routeForRequest(req, this.routePrefix+"/create"))
+    }).then(() => {
+      let suffix = values.id ? this.redirectAfterEdit : this.redirectAfterCreate
+      if (suffix) {
+        let redirect = this.routeForRequest(req, this.routePrefix + suffix)
+        res.redirect(redirect)
       }
-    }) 
+    })
   }
 
   convertValues(values) {
@@ -207,7 +204,14 @@ class EditController extends ViewController {
   remove(req, res) {
     return this.model.destroy(req.params.id).then((inst) => {
       req.flash('info', this.displayName + " deleted")
-      return res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
+    }).catch((e) => {
+      this.log.error(e)
+      req.flash('error', "Error deleting "+this.displayName+": "+e)
+    }).then(() => {
+      if (this.redirectAfterDelete) {
+        let redirect = this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete)
+        res.redirect(redirect)
+      }
     })
   }  
 }
