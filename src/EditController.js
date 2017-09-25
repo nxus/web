@@ -12,6 +12,10 @@ import ViewController from './ViewController'
  * 
  * # Parameters
  *  See Controller docs
+ *
+ * You can pass any of the constructor options arguments defined by
+ * `ViewController`, plus the following:
+ *  * `redirect` - set to false to disable redirect (default is true)
  *  * `redirectAfterCreate` - path suffix to routePrefix after route
  *  * `redirectAfterEdit` - path suffix to routePrefix after route
  *  * `redirectAfterDelete` - path suffix to routePrefix after route
@@ -19,7 +23,9 @@ import ViewController from './ViewController'
  * 
  * # Implement Routes
  * 
- * The default implementation of the routes handles querying for the model instance, pagination, and the template rendering. See the specific method documentation for each public view function.
+ * The default implementation of the routes handles querying for the
+ * model instance, pagination, and the template rendering. See the
+ * specific method documentation for each public view function.
  * 
  *
  */
@@ -35,6 +41,8 @@ class EditController extends ViewController {
     router.route("POST", routePrefix+"/edit/:id", ::this.save)
     router.route("POST", routePrefix+"/delete/:id", ::this.remove)
 
+    this.redirect = (options.redirect != undefined) ? options.redirect : true
+      // default to true for benefit of existing code
     this.redirectAfterCreate = options.redirectAfterCreate || ""
     this.redirectAfterEdit = options.redirectAfterEdit || ""
     this.redirectAfterDelete = options.redirectAfterDelete || ""
@@ -77,7 +85,7 @@ class EditController extends ViewController {
   // Routes
 
   _edit(req, res, next) {
-    this._findOne(req).then((object) => {
+    return this._findOne(req).then((object) => {
       if (!object) {
         res.status(404)
         next()
@@ -137,7 +145,7 @@ class EditController extends ViewController {
 
   save(req, res) {
     let values = req.body
-    this.convertValues(values).spread((values, related) => {
+    return this.convertValues(values).spread((values, related) => {
       return (values[this.idField]
       ? this.model.update(values[this.idField], values).then((is) => {return is[0]})
       : this.model.create(values)
@@ -165,20 +173,16 @@ class EditController extends ViewController {
         return inst.save()
       }).then((inst) => {
         req.flash('info', this.displayName + " saved")
-        let redirect = this.routeForRequest(req, this.routePrefix + (values.id
-                                                                    ? this.redirectAfterEdit
-                                                                    : this.redirectAfterCreate))
-        res.redirect(redirect)
       })
     }).catch((e) => {
       this.log.error(e)
       req.flash('error', "Error saving "+this.displayName+": "+e)
-      if (values.id) {
-        res.redirect(this.routeForRequest(req, this.routePrefix+"/edit/"+values[this.idField]))
-      } else {
-        res.redirect(this.routeForRequest(req, this.routePrefix+"/create"))
+    }).then(() => {
+      if (this.redirect) {
+        res.redirect(this.routeForRequest(req,
+          this.routePrefix + (values.id ? this.redirectAfterEdit : this.redirectAfterCreate)))
       }
-    }) 
+    })
   }
 
   convertValues(values) {
@@ -207,7 +211,13 @@ class EditController extends ViewController {
   remove(req, res) {
     return this.model.destroy(req.params.id).then((inst) => {
       req.flash('info', this.displayName + " deleted")
-      return res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
+    }).catch((e) => {
+      this.log.error(e)
+      req.flash('error', "Error deleting "+this.displayName+": "+e)
+    }).then(() => {
+      if (this.redirect) {
+        res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
+      }
     })
   }  
 }
