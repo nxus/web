@@ -12,6 +12,10 @@ import ViewController from './ViewController'
  * 
  * # Parameters
  *  See Controller docs
+ *
+ * You can pass any of the constructor options arguments defined by
+ * `ViewController`, plus the following:
+ *  * `redirect` - set to false to disable redirect (default is true)
  *  * `redirectAfterCreate` - path suffix to routePrefix after route
  *  * `redirectAfterEdit` - path suffix to routePrefix after route
  *  * `redirectAfterDelete` - path suffix to routePrefix after route
@@ -19,7 +23,9 @@ import ViewController from './ViewController'
  * 
  * # Implement Routes
  * 
- * The default implementation of the routes handles querying for the model instance, pagination, and the template rendering. See the specific method documentation for each public view function.
+ * The default implementation of the routes handles querying for the
+ * model instance, pagination, and the template rendering. See the
+ * specific method documentation for each public view function.
  * 
  *
  */
@@ -35,6 +41,8 @@ class EditController extends ViewController {
     router.route("POST", routePrefix+"/edit/:id", ::this.save)
     router.route("POST", routePrefix+"/delete/:id", ::this.remove)
 
+    this.redirect = (options.redirect != undefined) ? options.redirect : true
+      // default to true for benefit of existing code
     this.redirectAfterCreate = options.redirectAfterCreate || ""
     this.redirectAfterEdit = options.redirectAfterEdit || ""
     this.redirectAfterDelete = options.redirectAfterDelete || ""
@@ -170,10 +178,9 @@ class EditController extends ViewController {
       this.log.error(e)
       req.flash('error', "Error saving "+this.displayName+": "+e)
     }).then(() => {
-      let suffix = values.id ? this.redirectAfterEdit : this.redirectAfterCreate
-      if (suffix) {
-        let redirect = this.routeForRequest(req, this.routePrefix + suffix)
-        res.redirect(redirect)
+      if (this.redirect) {
+        res.redirect(this.routeForRequest(req,
+          this.routePrefix + (values.id ? this.redirectAfterEdit : this.redirectAfterCreate)))
       }
     })
   }
@@ -208,9 +215,8 @@ class EditController extends ViewController {
       this.log.error(e)
       req.flash('error', "Error deleting "+this.displayName+": "+e)
     }).then(() => {
-      if (this.redirectAfterDelete) {
-        let redirect = this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete)
-        res.redirect(redirect)
+      if (this.redirect) {
+        res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
       }
     })
   }  
