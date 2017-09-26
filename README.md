@@ -79,13 +79,19 @@ A base class for CRUD routes and templates for a model
 
  See Controller docs
 
+You can pass any of the constructor options arguments defined by
+`ViewController`, plus the following:
+
+-   `redirect` - set to false to disable redirect (default is true)
 -   `redirectAfterCreate` - path suffix to routePrefix after route
 -   `redirectAfterEdit` - path suffix to routePrefix after route
 -   `redirectAfterDelete` - path suffix to routePrefix after route
 
 ## Implement Routes
 
-The default implementation of the routes handles querying for the model instance, pagination, and the template rendering. See the specific method documentation for each public view function.
+The default implementation of the routes handles querying for the
+model instance, pagination, and the template rendering. See the
+specific method documentation for each public view function.
 
 **Parameters**
 
