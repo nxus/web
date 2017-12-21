@@ -40,6 +40,7 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
   constructor(opts={}) {
     super(opts)
 
+    this.useDataTablesAjax = opts.useDataTablesAjax || false
     this.useDataTablesCSS = true
     if (opts.useDataTablesCSS !== undefined) {
       this.useDataTablesCSS = opts.useDataTablesCSS
@@ -61,7 +62,7 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
       clientjs.includeScript(this.templatePrefix+"-list", __dirname+"/templates/datatables-enable.js")
     }
 
-    if (opts.useDataTablesAjax) {
+    if (this.useDataTablesAjax) {
       this._datatableAjaxRoute = this.routePrefix+'/dt-query'
       router.route('get', this._datatableAjaxRoute, ::this._datatableAjax)
     }
