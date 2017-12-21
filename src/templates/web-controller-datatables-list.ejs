@@ -1,0 +1,46 @@
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+
+<% if (typeof actions != 'undefined') { %>
+  <%- render("actions-buttons", {actions: actions.default, makeActionUrl: function(link) {return base + link }}) %>
+<% } %>
+<p></p>
+<% if (datatableAjaxRoute) { %>
+  <table class="datatable table table-striped" data-ajax="<%= datatableAjaxRoute %>"
+         data-page-length="<%= pagination.itemsPerPage %>" data-server-side="true">
+<% } else { %>
+    <table class="datatable table table-striped">
+<% } %>
+  <thead>
+    <tr>
+      <% attributes.forEach(function(attr) { %>
+        <th data-data="<%=attr.name%>"><%= attr.label %>
+        </th>
+      <% }) %>
+      <% if (typeof actions != "undefined" && actions.instance) { %>
+        <th data-data="actions" data-orderable='false'></th>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% objects.forEach(function(u) { %>
+      <tr>
+        <% attributes.forEach(function(attr) { %>
+          <% if(attr.isTitle) { %>
+            <td><a href="<%=instanceUrl%>/<%=u[idField]%>"><%if (u[attr.name]) { %><%=u[attr.name]%><% } else { %>[empty]<%}%></a></td>
+          <% } else if (attr.type == 'password') { %> <% return %>
+        <% } else if (attr.type == 'boolean') { %>
+        <td><%- u[attr.name] ? '<i class="fa fa-check"></i>' : '' %></td>
+    <% } else { %>
+        <td><%= u[attr.name] %></td>
+    <% } %>
+          <% }) %>
+          <% if (typeof actions != "undefined" && actions.instance) { %>
+            <td  class="bold">
+              <%- render("actions-icons", {actions: actions.instance, makeActionUrl: function(link) { return base + link + u[idField]}}) %>
+            </td>
+          <% } %>
+      </tr>
+      <% }) %>
+  </tbody>   
+</table>
+
