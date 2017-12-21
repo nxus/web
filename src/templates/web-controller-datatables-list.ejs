@@ -1,4 +1,6 @@
-<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<% if (useDataTablesCSS) { %>
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<% } %>
 
 <% if (typeof actions != 'undefined') { %>
   <%- render("actions-buttons", {actions: actions.default, makeActionUrl: function(link) {return base + link }}) %>

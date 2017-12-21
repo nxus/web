@@ -8,6 +8,10 @@ import Promise from 'bluebird'
  *
  * Supports either client-side data (overriding normal pagination queries) or server-side processing (providing an ajax endpoint compatible with datatables API).
  *
+ * Options:
+ *  * `useDataTablesAjax` - (false) whether server-side ajax should be used to populate, page, and query the data
+ *  * `useDataTablesCSS` - (true) some themes already include datatables support, if so set this to false
+ *
  * Client-side processing is the default:
  *
  * ```
@@ -35,6 +39,11 @@ import Promise from 'bluebird'
 let DataTablesMixin = (superclass) => class extends(superclass) {
   constructor(opts={}) {
     super(opts)
+
+    this.useDataTablesCSS = true
+    if (opts.useDataTablesCSS !== undefined) {
+      this.useDataTablesCSS = opts.useDataTablesCSS
+    }
     
     templater.on(`renderContext.${this.templatePrefix}-list`, () => {
       return {
@@ -61,6 +70,7 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
   defaultContext() {
     return super.defaultContext(...arguments).then((context) => {
       context.datatableAjaxRoute = this._datatableAjaxRoute
+      context.useDataTablesCSS = this.useDataTablesCSS
       return context
     })
   }
