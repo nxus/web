@@ -25,6 +25,7 @@ import {storage, HasModels} from 'nxus-storage'
  *  * `ignoreFields` - blacklist of fields to ignore in display
  *  * `displayFields` - whitelist of fields to display, show in this order if supplied
  *  * `listFields` - subset of fields to show on list view
+ *  * `searchFields` - subset of fields to use for search strings
  *  * `idField` - field to use for id in routes
  * 
  * # Implement Routes
@@ -66,6 +67,7 @@ class ViewController extends HasModels {
     this.ignoreFields = options.ignoreFields || ['id', 'createdAt', 'updatedAt']
     this.displayFields = options.displayFields || []
     this.listFields = options.listFields || []
+    this.searchFields = options.searchFields || []
     this.instanceTitleField = options.instanceTitleField || (this.displayFields.length > 0 ? this.displayFields[0] : null)
     this.idField = options.idField || 'id'
 
@@ -103,10 +105,25 @@ class ViewController extends HasModels {
     return options
   }
 
+  _filterQuery(req) {
+    let query = {}
+    let search = req.query.search
+    if (search) {
+      query.or = []
+      let fields = this.searchFields.length > 0 ? this.searchFields : this.displayFields
+      for (let f of fields) {
+        let x = {}
+        x[f] = {contains: search}
+        query.or.push(x)
+      }
+    }
+    return query
+  }
+
   _find(req) {
     let pageOptions = this._paginationState(req)
     let find = this.model.find()
-      .where({})
+      .where(this._filterQuery(req))
       .sort(pageOptions.sortField + ' ' + pageOptions.sortDirection)
       .limit(pageOptions.itemsPerPage)
       .skip((pageOptions.currentPage-1)*pageOptions.itemsPerPage)
@@ -126,6 +143,10 @@ class ViewController extends HasModels {
       find.populate(...p)
     }
     return find
+  }
+
+  _count(req) {
+    return this.model.count(this._filterQuery(req))
   }
 
   defaultContext(req, related=false) {
@@ -149,7 +170,7 @@ class ViewController extends HasModels {
     Promise.all([
       this.list(req, res, this._find(req)),
       this.defaultContext(req),
-      this.model.count()
+      this._count(req)
     ]).spread((context, defaultContext, count) => {
       defaultContext.pagination.count = count
       if (this.listFields.length > 0) {

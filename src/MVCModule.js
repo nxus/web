@@ -29,8 +29,9 @@ class MVCModule extends HasModels {
     super(options)
 
     this._controllers = []
+    this._pageTemplate = options.pageTemplate || "page"
     
-    templater.templateDir(this._dirName+"/templates/*.ejs", "page")
+    templater.templateDir(this._dirName+"/templates/*.ejs", this._pageTemplate)
 
     application.onceAfter('init', ::this._loadControllers)
   }
