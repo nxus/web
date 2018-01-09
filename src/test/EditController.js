@@ -36,4 +36,69 @@ describe("EditController", () => {
     })
 
   })
+  describe("Hooks for CRUD", () => {
+
+    let req, res, t
+    
+    class EditNothing extends EditController {
+      constructor() {
+        super()
+        this.redirect = false
+        this.didCreate = false
+        this.didUpdate = false
+        this.didRelatedUpdate = false
+        this.didRemove = false
+      }
+      
+      async _doCreate(values) {
+        this.didCreate = true
+      }
+
+      async _doUpdate(id, values) {
+        this.didUpdate = true
+      }
+
+      async _doRemove(id) {
+        this.didRemove = true
+      }
+
+      async _doRelatedUpdate(inst, related) {
+        this.didRelatedUpdate = true
+      }
+      
+      async _modelAttributes() {
+        return [{name: 'id', type: 'uuid'}]
+      }
+    }
+
+    before(() => {
+      req = {flash: sinon.spy(), body: {}}
+      res = {}
+      t = new EditNothing()
+    })
+    
+    it("should call _doCreate on save without id", async () => {
+      await t.save(req, res)
+      t.didCreate.should.be.true
+      req.flash.calledWith("info").should.be.true
+      req.flash.calledWith("error").should.be.false
+    })
+
+    it("should call _doUpdate on save with id", async () => {
+      req.body.id = 1
+      await t.save(req, res)
+      t.didUpdate.should.be.true
+      req.flash.calledWith("info").should.be.true
+      req.flash.calledWith("error").should.be.false
+    })
+
+    it("should call _doRemove on remove", async () => {
+      req.params = {id: 1}
+      await t.remove(req, res)
+      t.didRemove.should.be.true
+      req.flash.calledWith("info").should.be.true
+      req.flash.calledWith("error").should.be.false
+    })
+
+  })
 })
