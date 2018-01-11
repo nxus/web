@@ -143,46 +143,87 @@ class EditController extends ViewController {
     return {title: "Create " + this.displayName, object}
   }
 
-  save(req, res) {
-    let values = req.body
-    return this.convertValues(values).spread((values, related) => {
-      return (values[this.idField]
-      ? this.model.update(values[this.idField], values).then((is) => {return is[0]})
-      : this.model.create(values)
-      ).then((inst) => {
-        let find = this.model.findOne(inst.id)
-        for (let k in related) {
-          find = find.populate(k)
+   /**
+   * Override to perform custom update logic
+   * @param {id} id ID to update
+   * @param {object} values Fields object
+   * @returns {object} The updated instance
+   */
+  async _doUpdate(id, values) {
+    return this.model.update(values[this.idField], values).then((is) => {return is[0]})
+  }
+
+   /**
+   * Override to perform custom create logic
+   * @param {object} values Fields object
+   * @returns {object} The created instance
+   */
+  async _doCreate(values) {
+    return this.model.create(values)
+  }
+
+   /**
+   * Override to perform custom related field updates after create or update
+   * @param {object} inst instance to set related fields for
+   * @param {object} related {related_field: value} object
+   * @returns {object} The updated instance
+   */
+  async _doRelatedUpdate(inst, related) {
+    let find = this.model.findOne(inst.id)
+    for (let k in related) {
+      find = find.populate(k)
+    }
+    inst = await find()
+    for (let k in related) {
+      let added = related[k]
+      for (let ex of inst[k]) {
+        if (added.includes(ex.id)) {
+          added = _.without(added, ex.id)
+        } else {
+          inst[k].remove(ex.id)
         }
-        return find
-      }).then((inst) => {
-        for (let k in related) {
-          let added = related[k]
-          for (let ex of inst[k]) {
-            if (added.includes(ex.id)) {
-              added = _.without(added, ex.id)
-            } else {
-              inst[k].remove(ex.id)
-            }
-          }
-          for (let i of added) {
-            inst[k].add(i)
-          }
-        }
-        req.object = inst
-        return inst.save()
-      }).then((inst) => {
-        req.flash('info', this.displayName + " saved")
-      })
-    }).catch((e) => {
+      }
+      for (let i of added) {
+        inst[k].add(i)
+      }
+    }
+    req.object = inst
+    return inst.save()
+  }
+
+  
+   /**
+   * Override to perform custom remove logic
+   * @param {id} id ID to remove
+   * @returns {object} The updated instance
+   */
+  async _doRemove(id) {
+    return this.model.destroy(id)
+  }
+  
+  async save(req, res) {
+    let id
+    try {
+      let [values, related] = await this.convertValues(req.body)
+      id = values[this.idField]
+      let inst = await (id)
+            ? this._doUpdate(id, values)
+            : this._doCreate(values)
+
+      if (related) {
+        inst = await this._doRelatedUpdate(inst, related)
+      }
+
+      req.flash('info', this.displayName + " saved")
+    } catch(e) {
       this.log.error(e)
       req.flash('error', "Error saving "+this.displayName+": "+e)
-    }).then(() => {
-      if (this.redirect) {
-        res.redirect(this.routeForRequest(req,
-          this.routePrefix + (values.id ? this.redirectAfterEdit : this.redirectAfterCreate)))
-      }
-    })
+    }
+    
+    if (this.redirect) {
+      res.redirect(this.routeForRequest(req,
+          this.routePrefix + (id ? this.redirectAfterEdit : this.redirectAfterCreate)))
+    }
   }
 
   convertValues(values) {
@@ -208,17 +249,17 @@ class EditController extends ViewController {
     })
   }
   
-  remove(req, res) {
-    return this.model.destroy(req.params.id).then((inst) => {
+  async remove(req, res) {
+    try {
+      let inst = await this._doRemove(req.params.id)
       req.flash('info', this.displayName + " deleted")
-    }).catch((e) => {
+    } catch(e) {
       this.log.error(e)
       req.flash('error', "Error deleting "+this.displayName+": "+e)
-    }).then(() => {
-      if (this.redirect) {
-        res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
-      }
-    })
+    }
+    if (this.redirect) {
+      res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
+    }
   }  
 }
 
