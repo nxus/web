@@ -107,8 +107,8 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
 
     let acts = await actions.getActions(this.templatePrefix+"-list")
     objects = await Promise.map(objects, async (x) => {
-      let r = {id: x[this.idField], actions: "<i>Hi</i>"}
-      r.actions = await templater.render('actions-icons', {actions: acts.instance, makeActionUrl: (l) => {this.routePrefix + l + r.id}})
+      let r = {id: x[this.idField], actions: ""}
+      r.actions = await templater.render('actions-icons', {actions: acts.instance, makeActionUrl: (l) => {return this.routePrefix + l + r.id}})
       for (let k of fields) {
         r[k] = x[k]
       }
