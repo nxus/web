@@ -202,9 +202,10 @@ class EditController extends ViewController {
   }
   
   async save(req, res) {
+    let id
     try {
       let [values, related] = await this.convertValues(req.body)
-      let id = values[this.idField]
+      id = values[this.idField]
       let inst = await (id)
             ? this._doUpdate(id, values)
             : this._doCreate(values)
@@ -221,7 +222,7 @@ class EditController extends ViewController {
     
     if (this.redirect) {
       res.redirect(this.routeForRequest(req,
-          this.routePrefix + (values.id ? this.redirectAfterEdit : this.redirectAfterCreate)))
+          this.routePrefix + (id ? this.redirectAfterEdit : this.redirectAfterCreate)))
     }
   }
 
