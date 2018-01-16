@@ -34,6 +34,7 @@ You can pass any of the following into the constructor options argument:
 -   `ignoreFields` - blacklist of fields to ignore in display
 -   `displayFields` - whitelist of fields to display, show in this order if supplied
 -   `listFields` - subset of fields to show on list view
+-   `searchFields` - subset of fields to use for search strings
 -   `idField` - field to use for id in routes
 
 ## Implement Routes
@@ -121,6 +122,48 @@ Implement the create route. Return the context for template `templatePrefix-crea
 
 Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
 
+#### \_doUpdate
+
+Override to perform custom update logic
+
+**Parameters**
+
+-   `id` **id** ID to update
+-   `values` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Fields object
+
+Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
+
+#### \_doCreate
+
+Override to perform custom create logic
+
+**Parameters**
+
+-   `values` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Fields object
+
+Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The created instance
+
+#### \_doRelatedUpdate
+
+Override to perform custom related field updates after create or update
+
+**Parameters**
+
+-   `inst` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** instance to set related fields for
+-   `related` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** {related_field: value} object
+
+Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
+
+#### \_doRemove
+
+Override to perform custom remove logic
+
+**Parameters**
+
+-   `id` **id** ID to remove
+
+Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
+
 #### replaceRouteParams
 
 Replaces route parameters with values.
@@ -131,6 +174,39 @@ Replaces route parameters with values.
 -   `params` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** parameter replacements
 
 Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** route path, with parameters replaced
+
+### DataTablesMixin
+
+A mixin class for ViewController or subclasses to support jQuery DataTables (<https://datatables.net>)
+
+Supports either client-side data (overriding normal pagination queries) or server-side processing (providing an ajax endpoint compatible with datatables API).
+
+Options:
+
+-   `useDataTablesAjax` - (false) whether server-side ajax should be used to populate, page, and query the data
+-   `useDataTablesCSS` - (true) some themes already include datatables support, if so set this to false
+
+Client-side processing is the default:
+
+      import {DataTablesMixin, EditController} from 'nxus-web
+      class MyView extends DataTablesMixin(EditController) {
+         // usual EditController options like model, displayFields
+      }
+
+Set the `useDataTablesAjax` option to true for large datasets or server-side search logic etc.
+
+      import {DataTablesMixin, EditController} from 'nxus-web
+      class MyView extends DataTablesMixin(EditController) {
+          constructor(options={}) {
+             // usual EditController options like model, displayFields
+             options.useDataTablesAjax = true
+             super(options)
+         }
+      }
+
+**Parameters**
+
+-   `superclass`  
 
 ### add
 
