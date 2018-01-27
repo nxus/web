@@ -97,10 +97,12 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
     req.query.search = req.query.search.value
 
     let objects = await this._find(req)
-
-    let count = await this._count({query: {}})
+    req._old_query = req.query
+    req.query = {}
+    let count = await this._count(req)
     let countFiltered = count
     if (req.query.search) {
+      req.query = req._old_query
       countFiltered = await this._count(req)
     }
     
