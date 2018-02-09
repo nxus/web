@@ -27,6 +27,11 @@ import ViewController from './ViewController'
  * model instance, pagination, and the template rendering. See the
  * specific method documentation for each public view function.
  * 
+ * # Overriding templates
+ * See also the `ViewController` templates documentation.
+ * Assuming your `opts.prefix`/`opts.templatePrefix` is `my-module`, the following templates are registered with default implementations: 
+ *  * `my-module-create`
+ *  * `my-module-edit`
  *
  */
 

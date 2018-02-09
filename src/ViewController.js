@@ -15,7 +15,7 @@ import {storage, HasModels} from 'nxus-storage'
  * You can pass any of the following into the constructor options argument:
  *  * `modelIdentity` - defaults to name of class, underscored, e.g. `todo_item`
  *  * `prefix` - defaults to name of class, dashed, e.g. `todo-item`
- *  * `templatePrefix` - defaults to parent containing directory (module) + `prefix`, e.g. `mymodule-todo-item-`
+ *  * `templatePrefix` - defaults to same as `prefix`
  *  * `routePrefix` - defaults to '/'+`prefix`
  *  * `pageTemplate` - the layout to use to render the page
  *  * `populate` - relationships to populate on find. Accepts a string, array, or array of [rel, options] arrays.
@@ -32,7 +32,25 @@ import {storage, HasModels} from 'nxus-storage'
  * 
  * The default implementation of the routes handles querying for the model instance, pagination, and the template rendering. See the specific method documentation for each public view function.
  * 
- *
+ * # Overriding templates
+ *  
+ * Assuming your `opts.prefix`/`opts.templatePrefix` is `my-module`, the following templates are registered with default implementations: 
+ *  * `my-module-detail`
+ *  * `my-module-list`
+ *  
+ * Overriding this in your module by registering a template with `templater`, either by naming it `my-module-list.ejs` and using `templator.templateDir` or explicitly:
+ *  
+ * ```
+ * import {templater} from 'nxus-templater'
+ *  
+ * class MyModule extends ViewController {
+ *   constructor(opts={}) {
+ *     ...
+ *     super(opts)
+ *     templater.replace().template(__dirname+"/path/to/template.ejs", this.pageTemplate, this.templatePrefix+"-detail")
+ *   }
+ * }
+ * ```
  */
 
 
