@@ -8,6 +8,7 @@ import DataTablesMixin from './DataTablesMixin'
 import {default as Nav, nav} from './modules/web-nav'
 import {default as Actions, actions} from './modules/web-actions'
 
+
 class Web extends NxusModule {
   constructor() {
     super()

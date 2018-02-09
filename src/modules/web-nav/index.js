@@ -4,6 +4,11 @@ import {templater} from 'nxus-templater'
 import morph from 'morph'
 import _ from 'underscore'
 
+/**
+ * # `import {nav} from 'nxus-web'`
+ *  
+ */
+
 class Nav extends NxusModule {
 
   constructor() {

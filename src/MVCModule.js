@@ -8,6 +8,8 @@ import {templater} from 'nxus-templater'
 import {router} from 'nxus-router'
 import {storage, HasModels} from 'nxus-storage'
 
+const REGEX_FILE = /[^\/\~]$/;
+
 /**
  * 
  * 
@@ -20,8 +22,6 @@ import {storage, HasModels} from 'nxus-storage'
  *  * Controllers from `./controllers` - you may want to extend `nxus-web.ViewController` 
  *
  */
-
-const REGEX_FILE = /[^\/\~]$/;
 
 class MVCModule extends HasModels {
 

@@ -2,8 +2,8 @@ import {NxusModule} from 'nxus-core'
 import {templater} from 'nxus-templater'
 import _ from 'underscore'
 
-/*
- * # API
+/**
+ * # `import {actions} from 'nxus-web'`
  * Example adding a link button to the template 'template-name':
  * ```actions.add('template-name', 'Label', '/link' {icon: 'fa fa-plus'})```
  * 
