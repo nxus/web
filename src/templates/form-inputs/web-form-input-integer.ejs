@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label class="col-sm-3 to-right" for="control_<%= name %>"><%= label %></label>
+  <%- render('web-form-input-label') %>
     <div class="col-sm-7">
         <input type="text" id="control_<%= name %>" class="form-control" value="<%= value %>" placeholder="Enter <%= label %>" name="<%= name %>" pattern="-?[\d,]*" title="<%= label %> must be an integer."/>
     </div>
