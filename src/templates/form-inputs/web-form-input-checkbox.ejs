@@ -1,5 +1,5 @@
-     <div class="form-group">
-        <label class="col-sm-3 to-right" for="control_<%= name %>"><%= label %>?</label>
+<div class="form-group">
+  <%- render('web-form-input-label') %>
         <div class="col-sm-7">
             <input type="checkbox" id="control_<%= name %>" class="" <%= value ? 'checked="checked"' : '' %> name="<%= name %>">
         </div>

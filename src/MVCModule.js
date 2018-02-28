@@ -8,6 +8,8 @@ import {templater} from 'nxus-templater'
 import {router} from 'nxus-router'
 import {storage, HasModels} from 'nxus-storage'
 
+const REGEX_FILE = /[^\/\~]$/;
+
 /**
  * 
  * 
@@ -21,16 +23,15 @@ import {storage, HasModels} from 'nxus-storage'
  *
  */
 
-const REGEX_FILE = /[^\/\~]$/;
-
 class MVCModule extends HasModels {
 
   constructor(options={}) {
     super(options)
 
     this._controllers = []
+    this._pageTemplate = options.pageTemplate || "page"
     
-    templater.templateDir(this._dirName+"/templates/*.ejs", "page")
+    templater.templateDir(this._dirName+"/templates/*.ejs", this._pageTemplate)
 
     application.onceAfter('init', ::this._loadControllers)
   }

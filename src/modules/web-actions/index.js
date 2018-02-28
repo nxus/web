@@ -2,10 +2,13 @@ import {NxusModule} from 'nxus-core'
 import {templater} from 'nxus-templater'
 import _ from 'underscore'
 
-/*
- * # API
+/**
+ * # `import {actions} from 'nxus-web'`
  * Example adding a link button to the template 'template-name':
  * ```actions.add('template-name', 'Label', '/link' {icon: 'fa fa-plus'})```
+ * 
+ * Retrieving actions for use (normally not needed, automatically added to template context as 'actions)
+ * ```actions.getActions('template-name')```
  * 
  * You may additionally group actions together by providing a 'group' key to the options object. 
  *
@@ -63,6 +66,15 @@ class WebActions extends NxusModule {
     })
   }
 
+  /*
+   * Returns actions for a given template
+   * @param {String} template
+   * @returns {Object} Action objects grouped by optional group names
+   */
+  getActions(template) {
+    return this._getActions(template)
+  }
+  
   _getActions(template) {
     let actions = this._actions[template]
     return _.groupBy(actions, 'group')
