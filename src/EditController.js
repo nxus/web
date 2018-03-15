@@ -178,7 +178,7 @@ class EditController extends ViewController {
     for (let k in related) {
       find = find.populate(k)
     }
-    inst = await find()
+    inst = await find
     for (let k in related) {
       let added = related[k]
       for (let ex of inst[k]) {
