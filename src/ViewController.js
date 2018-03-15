@@ -111,8 +111,8 @@ class ViewController extends HasModels {
   _paginationState(req) {
     let options = Object.assign({}, this.paginationOptions)
     options.currentPage =  parseInt(req.query.page) || 1
-    if (req.query.items) {
-      options.itemsPerPage = req.query.items
+    if (req.query.items !== undefined) {
+      options.itemsPerPage = parseInt(req.query.items)
     }
     if (req.query.sort) {
       options.sortField = req.query.sort

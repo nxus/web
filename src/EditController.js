@@ -211,9 +211,9 @@ class EditController extends ViewController {
     try {
       let [values, related] = await this.convertValues(req.body)
       id = values[this.idField]
-      let inst = await (id)
+      let inst = await (id
             ? this._doUpdate(id, values)
-            : this._doCreate(values)
+            : this._doCreate(values))
 
       if (related) {
         inst = await this._doRelatedUpdate(inst, related)
@@ -221,7 +221,7 @@ class EditController extends ViewController {
 
       req.flash('info', this.displayName + " saved")
     } catch(e) {
-      this.log.error(e)
+      this.log.error(e.toString())
       req.flash('error', "Error saving "+this.displayName+": "+e)
     }
     
