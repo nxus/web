@@ -92,8 +92,10 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
     // remap datatables query params to ViewController fields
     req.query.items = parseInt(req.query.length)
     req.query.page = (parseInt(req.query.start)/req.query.items) + 1
-    req.query.sort = fields[parseInt(req.query.order.column)]
-    req.query.dir = req.query.order.dir
+    if (req.query.order && req.query.order.length > 0) {
+      req.query.sort = fields[parseInt(req.query.order[0].column)]
+      req.query.dir = req.query.order[0].dir
+    }
     req.query.search = req.query.search.value
 
     let objects = await this._find(req)
