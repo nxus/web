@@ -192,7 +192,6 @@ class EditController extends ViewController {
         inst[k].add(i)
       }
     }
-    req.object = inst
     return inst.save()
   }
 
@@ -205,7 +204,18 @@ class EditController extends ViewController {
   async _doRemove(id) {
     return this.model.destroy(id)
   }
-  
+
+   /**
+   * Implement object save for create and edit routes.
+   *
+   * As a side-effect, it adds an `object` property to the request
+   * object that contains the created or modified object. This is for
+   * the benefit of the `routeForRequest()` method, which may find it
+   * useful creating the redirect route.
+   *
+   * @param {Request}  req The express request object
+   * @param {Response} res The express response object
+   */
   async save(req, res) {
     let id
     try {
@@ -219,6 +229,7 @@ class EditController extends ViewController {
         inst = await this._doRelatedUpdate(inst, related)
       }
 
+      req.object = inst
       req.flash('info', this.displayName + " saved")
     } catch(e) {
       this.log.error(e.toString())
