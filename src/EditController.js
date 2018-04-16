@@ -192,7 +192,8 @@ class EditController extends ViewController {
         inst[k].add(i)
       }
     }
-    return inst.save()
+    await inst.save()
+    return inst
   }
 
   
