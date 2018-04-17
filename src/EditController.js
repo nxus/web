@@ -74,9 +74,9 @@ class EditController extends ViewController {
   * Useful to replace extra route `:params` in `this.routePrefix`.
   * @param {Request} req The express req object
   * @param {String} route The route to be updated
-  * @param {Object} the model instance that has been saved (from create
-  *   or edit actions) or deleted; undefined when route is for the
-  *   default context; may also be undefined if the save or delete
+  * @param {Object} inst the model instance that has been saved (from
+  *   create or edit actions) or deleted; undefined when route is for
+  *   the default context; may also be undefined if the save or delete
   *   failed
   * @returns {String} The route to be used
   */
