@@ -74,9 +74,13 @@ class EditController extends ViewController {
   * Useful to replace extra route `:params` in `this.routePrefix`.
   * @param {Request} req The express req object
   * @param {String} route The route to be updated
+  * @param {Object} inst the model instance that has been saved (from
+  *   create or edit actions) or deleted; undefined when route is for
+  *   the default context; may also be undefined if the save or delete
+  *   failed
   * @returns {String} The route to be used
   */
-  routeForRequest(req, route) {
+  routeForRequest(req, route, inst) {
     return route
   }
   
@@ -192,8 +196,8 @@ class EditController extends ViewController {
         inst[k].add(i)
       }
     }
-    req.object = inst
-    return inst.save()
+    await inst.save()
+    return inst
   }
 
   
@@ -205,13 +209,19 @@ class EditController extends ViewController {
   async _doRemove(id) {
     return this.model.destroy(id)
   }
-  
+
+   /**
+   * Implement object save for create and edit routes.
+   *
+   * @param {Request}  req The express request object
+   * @param {Response} res The express response object
+   */
   async save(req, res) {
-    let id
+    let id, inst
     try {
       let [values, related] = await this.convertValues(req.body)
       id = values[this.idField]
-      let inst = await (id
+      inst = await (id
             ? this._doUpdate(id, values)
             : this._doCreate(values))
 
@@ -227,7 +237,8 @@ class EditController extends ViewController {
     
     if (this.redirect) {
       res.redirect(this.routeForRequest(req,
-          this.routePrefix + (id ? this.redirectAfterEdit : this.redirectAfterCreate)))
+          this.routePrefix + (id ? this.redirectAfterEdit : this.redirectAfterCreate),
+          inst))
     }
   }
 
@@ -255,15 +266,18 @@ class EditController extends ViewController {
   }
   
   async remove(req, res) {
+    let inst
     try {
-      let inst = await this._doRemove(req.params.id)
+      inst = await this._doRemove(req.params.id)
       req.flash('info', this.displayName + " deleted")
     } catch(e) {
       this.log.error(e)
       req.flash('error', "Error deleting "+this.displayName+": "+e)
     }
     if (this.redirect) {
-      res.redirect(this.routeForRequest(req, this.routePrefix + this.redirectAfterDelete))
+      res.redirect(this.routeForRequest(req,
+          this.routePrefix + this.redirectAfterDelete,
+          inst))
     }
   }  
 }
