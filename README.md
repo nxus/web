@@ -197,6 +197,15 @@ Override to perform custom remove logic
 
 Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
 
+#### save
+
+Implement object save for create and edit routes.
+
+**Parameters**
+
+-   `req` **[Request](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/request)** The express request object
+-   `res` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)** The express response object
+
 #### replaceRouteParams
 
 Replaces route parameters with values.
