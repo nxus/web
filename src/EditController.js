@@ -159,7 +159,7 @@ class EditController extends ViewController {
    * @returns {object} The updated instance
    */
   async _doUpdate(id, values) {
-    return this.model.update(values[this.idField], values).then((is) => {return is[0]})
+    return this.model.update(id, values).then((is) => {return is[0]})
   }
 
    /**
