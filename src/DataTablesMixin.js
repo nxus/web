@@ -87,17 +87,8 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
   
   /* Handle datatables server-side processing ajax requests */
   async _datatableAjax(req, res) {
-    let fields = this.listFields.length > 0 ? this.listFields : this.displayFields
-
-    // remap datatables query params to ViewController fields
-    req.query.items = parseInt(req.query.length)
-    req.query.page = (parseInt(req.query.start)/req.query.items) + 1
-    if (req.query.order && req.query.order.length > 0) {
-      req.query.sort = fields[parseInt(req.query.order[0].column)]
-      req.query.dir = req.query.order[0].dir
-    }
-    req.query.search = req.query.search.value
-
+    req = this._datatablesModifyQuery(req)
+    
     let objects = await this._find(req)
     req._old_query = req.query
     req.query = {}
@@ -108,14 +99,15 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
       countFiltered = await this._count(req)
     }
     
-
+    let fields = this._datatablesColumnFields()
+    
     let acts = await actions.getActions(this.templatePrefix+"-list")
     objects = await Promise.map(objects, async (x) => {
       let r = {id: x[this.idField], actions: ""}
-      r.actions = await templater.render('actions-icons', {actions: acts.instance, makeActionUrl: (l) => {return this.routePrefix + l + r.id}})
       for (let k of fields) {
         r[k] = x[k]
       }
+      r.actions = await templater.render('actions-icons', {actions: acts.instance, makeActionUrl: ::this._datatablesMakeActionUrl(r)})
       return r
     })
     res.send({
@@ -126,6 +118,29 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
     })
   }
 
+  _datatablesColumnFields() {
+    return this.listFields.length > 0 ? this.listFields : this.displayFields
+  }
+
+  _datatablesModifyQuery(req) {
+    let fields = this._datatablesColumnFields()
+    // remap datatables query params to ViewController fields
+    req.query.items = parseInt(req.query.length)
+    req.query.page = (parseInt(req.query.start)/req.query.items) + 1
+    if (req.query.order && req.query.order.length > 0) {
+      req.query.sort = fields[parseInt(req.query.order[0].column)]
+      req.query.dir = req.query.order[0].dir
+    }
+    if (req.query.search) {
+      req.query.search = req.query.search.value
+    }
+    return req
+  }
+  
+  _datatablesMakeActionUrl (r) {
+    return (l) => { return this.routePrefix + l + r.id }
+  }
+  
 }
 
 export default DataTablesMixin
