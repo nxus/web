@@ -221,7 +221,7 @@ class EditController extends ViewController {
     try {
       let [values, related] = await this.convertValues(req.body)
       id = values[this.idField]
-      delete values[this.idField]
+      if (!id) delete values[this.idField]
       inst = await (id
             ? this._doUpdate(id, values)
             : this._doCreate(values))
