@@ -51,10 +51,12 @@ describe("EditController", () => {
       }
       
       async _doCreate(values) {
+        this.didCreateWithoutID = (values.id === undefined)
         this.didCreate = true
       }
 
       async _doUpdate(id, values) {
+        this.didUpdateWithID = (id !== undefined && id == values.id)
         this.didUpdate = true
       }
 
@@ -80,6 +82,7 @@ describe("EditController", () => {
     it("should call _doCreate on save without id", async () => {
       await t.save(req, res)
       t.didCreate.should.be.true
+      t.didCreateWithoutID.should.be.true
       req.flash.calledWith("info").should.be.true
       req.flash.calledWith("error").should.be.false
     })
@@ -88,6 +91,7 @@ describe("EditController", () => {
       req.body.id = 1
       await t.save(req, res)
       t.didUpdate.should.be.true
+      t.didUpdateWithID.should.be.true
       req.flash.calledWith("info").should.be.true
       req.flash.calledWith("error").should.be.false
     })
