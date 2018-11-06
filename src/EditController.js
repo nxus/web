@@ -39,6 +39,8 @@ class EditController extends ViewController {
   constructor(options={}) {
     super(options)
 
+    this.routeDetail = '/edit'
+    
     let routePrefix = this.routePrefix
     router.route(routePrefix+"/create", ::this._create)
     router.route(routePrefix+"/edit/:id", ::this._edit)
@@ -86,7 +88,7 @@ class EditController extends ViewController {
   
   defaultContext(req, related=false) {
     return super.defaultContext(req, related).then((ret) => {
-      ret.instanceUrl = this.routeForRequest(req, this.routePrefix+"/edit")
+      ret.instanceUrl = this.routeForRequest(req, this.routePrefix+this.routeDetail)
       return ret
     })
   }
