@@ -24,25 +24,27 @@
     </tr>
   </thead>
   <tbody>
+    <% if (!datatableAjaxRoute) { %>
     <% objects.forEach(function(u) { %>
       <tr>
         <% attributes.forEach(function(attr) { %>
           <% if(attr.isTitle) { %>
             <td><a href="<%=instanceUrl%>/<%=u[idField]%>"><%if (u[attr.name]) { %><%=u[attr.name]%><% } else { %>[empty]<%}%></a></td>
           <% } else if (attr.type == 'password') { %> <% return %>
-        <% } else if (attr.type == 'boolean') { %>
-        <td><%- u[attr.name] ? '<i class="fa fa-check"></i>' : '' %></td>
-    <% } else { %>
-        <td><%= u[attr.name] %></td>
-    <% } %>
-          <% }) %>
-          <% if (typeof actions != "undefined" && actions.instance) { %>
-            <td  class="bold">
-              <%- render("actions-icons", {actions: actions.instance, makeActionUrl: function(link) { return base + link + u[idField]}}) %>
-            </td>
+          <% } else if (attr.type == 'boolean') { %>
+            <td><%- u[attr.name] ? '<i class="fa fa-check"></i>' : '' %></td>
+          <% } else { %>
+            <td><%= u[attr.name] %></td>
           <% } %>
+        <% }) %>
+        <% if (typeof actions != "undefined" && actions.instance) { %>
+        <td  class="bold">
+          <%- render("actions-icons", {actions: actions.instance, makeActionUrl: function(link) { return base + link + u[idField]}}) %>
+        </td>
+        <% } %>
       </tr>
-      <% }) %>
+    <% }) %>
+    <% } %>
   </tbody>   
 </table>
 

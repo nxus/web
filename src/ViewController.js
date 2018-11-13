@@ -89,6 +89,7 @@ class ViewController extends HasModels {
     this.instanceTitleField = options.instanceTitleField || (this.displayFields.length > 0 ? this.displayFields[0] : null)
     this.idField = options.idField || 'id'
 
+    this.routeDetail = "/view"
     
 
     let routePrefix = this.routePrefix
@@ -175,7 +176,7 @@ class ViewController extends HasModels {
         attributes: attrs,
         displayName: this.displayName,
         base: this.routePrefix,
-        instanceUrl: this.routePrefix+"/view",
+        instanceUrl: this.routePrefix + this.routeDetail,
         idField: this.idField,
         title: this.displayName
       }

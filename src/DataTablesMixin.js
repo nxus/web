@@ -108,6 +108,11 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
         r[k] = x[k]
       }
       r.actions = await templater.render('actions-icons', {actions: acts.instance, makeActionUrl: ::this._datatablesMakeActionUrl(r)})
+      // Format title field as link to detail
+      if (this.instanceTitleField) {
+        r[this.instanceTitleField] = `<a href="${this.routePrefix}${this.routeDetail}/${r.id}">${r[this.instanceTitleField]}</a>`
+      }
+      
       return r
     })
     res.send({
