@@ -1,5 +1,7 @@
 <% if (useDataTablesCSS) { %>
-  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+  <% useDataTablesCSS.forEach(function(url) { %>
+    <link rel="stylesheet" type="text/css" href="<%=url%>">
+  <% }) %>
 <% } %>
 
 <% if (typeof actions != 'undefined') { %>

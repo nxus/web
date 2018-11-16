@@ -21,6 +21,20 @@ describe("DataTablesMixin", () => {
       let t = new DTThing({useDataTablesAjax: true})
       t._datatableAjaxRoute.should.equal('/dt-thing/dt-query')
     })
+    it("should have defaults for script paths", () => {
+      let t = new DTThing()
+      t.useDataTablesEnableScript.endsWith("templates/datatables-enable.js").should.be.true
+      t.useDataTablesURL[0].endsWith("jquery.dataTables.js").should.be.true
+    })
+    it("should use passed options for script paths", () => {
+      let t = new DTThing({
+        useDataTablesEnableScript: 'path',
+        useDataTablesURL: ['url', 'url2']
+      })
+      t.useDataTablesEnableScript.should.equal('path')
+      t.useDataTablesURL[0].should.equal("url")
+      t.useDataTablesURL[1].should.equal("url2")
+    })
   })
 
 })
