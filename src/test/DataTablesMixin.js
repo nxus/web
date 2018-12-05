@@ -24,7 +24,7 @@ describe("DataTablesMixin", () => {
     it("should have defaults for script paths", () => {
       let t = new DTThing()
       t.useDataTablesEnableScript.endsWith("templates/datatables-enable.js").should.be.true
-      t.useDataTablesURL[0].endsWith("jquery.dataTables.js").should.be.true
+      t.useDataTablesURL[0].endsWith("jquery.dataTables.min.js").should.be.true
     })
     it("should use passed options for script paths", () => {
       let t = new DTThing({

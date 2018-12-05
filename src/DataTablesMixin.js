@@ -71,7 +71,10 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
       this.useDataTablesURL = [this.useDataTablesURL]
     }
     this.useDataTablesCSS = ['//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css']
-    if (opts.useDataTablesCSS !== undefined) {
+    if (opts.useDataTablesCSS == false) {
+      this.useDataTablesCSS = []
+    }
+    if (isArray(opts.useDataTablesCSS)) {
       this.useDataTablesCSS = opts.useDataTablesCSS
     }
     this.useDataTablesEnableScript = opts.useDataTablesEnableScript || __dirname+"/templates/datatables-enable.js"
