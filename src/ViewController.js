@@ -300,6 +300,8 @@ class ViewController extends HasModels {
     if (!withRelated || _.isEmpty(related)) {
       return Promise.resolve(attrs)
     } else {
+      let visible = attrs.map(x => x.name)
+      related = related.filter(x => visible.includes(x.name))
       return Promise.map(related, (rel) => {
         let modelName = rel.model || rel.collection
         return storage.getModel(modelName).then((m) => {
