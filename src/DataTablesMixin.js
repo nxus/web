@@ -3,6 +3,8 @@ import {templater} from 'nxus-templater'
 import {actions} from './modules/web-actions'
 import Promise from 'bluebird'
 
+import {isArray} from 'underscore'
+
 /**
  * A mixin class for ViewController or subclasses to support jQuery DataTables (https://datatables.net)
  *
@@ -10,7 +12,9 @@ import Promise from 'bluebird'
  *
  * Options:
  *  * `useDataTablesAjax` - (false) whether server-side ajax should be used to populate, page, and query the data
- *  * `useDataTablesCSS` - (true) some themes already include datatables support, if so set this to false
+ *  * `useDataTablesCSS` - (cdn css url, or array of urls) some themes already include datatables support, if so set this to false
+ *  * `useDataTablesURL` - (cdn script url, or array of urls) to override the default cdn URL
+ *  * `useDataTablesEnableScript` - (path to js) to override initialization script to include
  *
  * Client-side processing is the default:
  *
@@ -34,6 +38,27 @@ import Promise from 'bluebird'
  *   }
  * ```
  *
+ * The `useDataTablesCSS`, `useDataTablesURL`, and `useDataTablesEnableScript` are needed for enabling additional
+ * extensions, e.g. to use Datatables.select:
+ * ```
+ *   class MyView extends DataTablesMixin(EditController) {
+ *       constructor(options={}) {
+ *          options.useDataTablesURL = [
+ *            "//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js",
+ *            "//cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"
+ *          ]
+ *          options.useDataTablesCSS = [
+ *            "//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css",
+ *            "//cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css"
+ *          ]
+ *          // this file in your project would include `$('.datatable).DataTable({select: true})` etc
+ *          options.useDataTablesEnableScript = __dirname+"/components/my-datatables-enable.js"
+ *          super(options)
+ *      }
+ *   }
+ * 
+ * ```
+ * 
  */
 
 let DataTablesMixin = (superclass) => class extends(superclass) {
@@ -41,14 +66,22 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
     super(opts)
 
     this.useDataTablesAjax = opts.useDataTablesAjax || false
-    this.useDataTablesCSS = true
-    if (opts.useDataTablesCSS !== undefined) {
+    this.useDataTablesURL = opts.useDataTablesURL || '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js'
+    if (!isArray(this.useDataTablesURL)) {
+      this.useDataTablesURL = [this.useDataTablesURL]
+    }
+    this.useDataTablesCSS = ['//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css']
+    if (opts.useDataTablesCSS == false) {
+      this.useDataTablesCSS = []
+    }
+    if (isArray(opts.useDataTablesCSS)) {
       this.useDataTablesCSS = opts.useDataTablesCSS
     }
+    this.useDataTablesEnableScript = opts.useDataTablesEnableScript || __dirname+"/templates/datatables-enable.js"
     
     templater.on(`renderContext.${this.templatePrefix}-list`, () => {
       return {
-        scripts: ['//cdn.datatables.net/1.10.16/js/jquery.dataTables.js']
+        scripts: this.useDataTablesURL
       }
     })
     templater.replace().template(__dirname+"/templates/web-controller-datatables-list.ejs", this.pageTemplate, this.templatePrefix+'-list')
@@ -59,7 +92,7 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
       this.log.error("nxus-web DataTablesMixin: nxus-clientjs not installed\n\nYou will need to include nxus-web/lib/templates/datatables-enable.js manually in your template output after jquery")
     }
     if (clientjs){
-      clientjs.includeScript(this.templatePrefix+"-list", __dirname+"/templates/datatables-enable.js")
+      clientjs.includeScript(this.templatePrefix+"-list", this.useDataTablesEnableScript)
     }
 
     if (this.useDataTablesAjax) {
