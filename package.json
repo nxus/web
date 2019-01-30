@@ -1,6 +1,6 @@
 {
   "name": "nxus-web",
-  "version": "4.1.10",
+  "version": "4.1.11",
   "description": "Base theme, template, and MVC support for Nxus applications",
   "main": "lib",
   "scripts": {
