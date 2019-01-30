@@ -226,7 +226,9 @@ Supports either client-side data (overriding normal pagination queries) or serve
 Options:
 
 -   `useDataTablesAjax` - (false) whether server-side ajax should be used to populate, page, and query the data
--   `useDataTablesCSS` - (true) some themes already include datatables support, if so set this to false
+-   `useDataTablesCSS` - (cdn css url, or array of urls) some themes already include datatables support, if so set this to false
+-   `useDataTablesURL` - (cdn script url, or array of urls) to override the default cdn URL
+-   `useDataTablesEnableScript` - (path to js) to override initialization script to include
 
 Client-side processing is the default:
 
@@ -242,6 +244,25 @@ Set the `useDataTablesAjax` option to true for large datasets or server-side sea
           constructor(options={}) {
              // usual EditController options like model, displayFields
              options.useDataTablesAjax = true
+             super(options)
+         }
+      }
+
+The `useDataTablesCSS`, `useDataTablesURL`, and `useDataTablesEnableScript` are needed for enabling additional
+extensions, e.g. to use Datatables.select:
+
+      class MyView extends DataTablesMixin(EditController) {
+          constructor(options={}) {
+             options.useDataTablesURL = [
+               "//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js",
+               "//cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"
+             ]
+             options.useDataTablesCSS = [
+               "//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css",
+               "//cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css"
+             ]
+             // this file in your project would include `$('.datatable).DataTable({select: true})` etc
+             options.useDataTablesEnableScript = __dirname+"/components/my-datatables-enable.js"
              super(options)
          }
       }
