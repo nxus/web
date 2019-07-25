@@ -2,6 +2,7 @@
   <%- render('web-form-input-label') %>
     <div class="col-sm-7">
       <select id="control_<%= name %>" class="form-control" name="<%= name %>">
+        <option></option>
       <% if (value && value.id) { value = value.id } // handle populated values %>
       <% if(typeof instances != "undefined") { %>
         <% instances.forEach(function(i) { %>
