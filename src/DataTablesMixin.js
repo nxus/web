@@ -140,10 +140,11 @@ let DataTablesMixin = (superclass) => class extends(superclass) {
       for (let k of fields) {
         r[k] = x[k]
       }
-      r.actions = await templater.render('actions-icons', {actions: acts.instance, makeActionUrl: ::this._datatablesMakeActionUrl(r)})
+      let makeUrl = ::this._datatablesMakeActionUrl(r)
+      r.actions = await templater.render('actions-icons', {actions: acts.instance, makeActionUrl: makeUrl})
       // Format title field as link to detail
       if (this.instanceTitleField) {
-        r[this.instanceTitleField] = `<a href="${this.routePrefix}${this.routeDetail}/${r.id}">${r[this.instanceTitleField]}</a>`
+        r[this.instanceTitleField] = `<a href="${makeUrl(this.routeDetail+"/")}">${r[this.instanceTitleField]}</a>`
       }
       
       return r
