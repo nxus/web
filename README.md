@@ -76,11 +76,11 @@ Implement the list route. Resolve the passed query and return the context for te
 
 **Parameters**
 
--   `req` **[Request](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/request)** The express request object
--   `res` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)** The express response object
--   `query` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** A query that can be further filtered or populated before resolution
+-   `req` **[Request](https://developer.mozilla.org/Add-ons/SDK/High-Level_APIs/request)** The express request object
+-   `res` **[Response](https://developer.mozilla.org/docs/Web/Guide/HTML/HTML5)** The express response object
+-   `query` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** A query that can be further filtered or populated before resolution
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering. Include `pagination: this.paginationOptions` by default
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering. Include `pagination: this.paginationOptions` by default
 
 #### detail
 
@@ -89,11 +89,11 @@ context for template `templatePrefix-view`
 
 **Parameters**
 
--   `req` **[Request](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/request)** The express request object
--   `res` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)** The express response object
--   `query` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** A query for one object that can be further populated before resolution
+-   `req` **[Request](https://developer.mozilla.org/Add-ons/SDK/High-Level_APIs/request)** The express request object
+-   `res` **[Response](https://developer.mozilla.org/docs/Web/Guide/HTML/HTML5)** The express response object
+-   `query` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** A query for one object that can be further populated before resolution
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
 
 ### EditController
 
@@ -137,11 +137,11 @@ Implement the edit route. Resolve the passed query and return the context for te
 
 **Parameters**
 
--   `req` **[Request](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/request)** The express request object
--   `res` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)** The express response object
--   `query` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** A query that can be further filtered or populated before resolution
+-   `req` **[Request](https://developer.mozilla.org/Add-ons/SDK/High-Level_APIs/request)** The express request object
+-   `res` **[Response](https://developer.mozilla.org/docs/Web/Guide/HTML/HTML5)** The express response object
+-   `query` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** A query that can be further filtered or populated before resolution
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
 
 #### create
 
@@ -149,11 +149,11 @@ Implement the create route. Return the context for template `templatePrefix-crea
 
 **Parameters**
 
--   `req` **[Request](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/request)** The express request object
--   `res` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)** The express response object
--   `object` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** An empty object for setting defaults for the template
+-   `req` **[Request](https://developer.mozilla.org/Add-ons/SDK/High-Level_APIs/request)** The express request object
+-   `res` **[Response](https://developer.mozilla.org/docs/Web/Guide/HTML/HTML5)** The express response object
+-   `object` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** An empty object for setting defaults for the template
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The context for template rendering.
 
 #### \_doUpdate
 
@@ -162,9 +162,9 @@ Override to perform custom update logic
 **Parameters**
 
 -   `id` **id** ID to update
--   `values` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Fields object
+-   `values` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Fields object
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
 
 #### \_doCreate
 
@@ -172,9 +172,9 @@ Override to perform custom create logic
 
 **Parameters**
 
--   `values` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Fields object
+-   `values` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Fields object
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The created instance
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The created instance
 
 #### \_doRelatedUpdate
 
@@ -182,10 +182,10 @@ Override to perform custom related field updates after create or update
 
 **Parameters**
 
--   `inst` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** instance to set related fields for
--   `related` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** {related_field: value} object
+-   `inst` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** instance to set related fields for
+-   `related` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** {related_field: value} object
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
 
 #### \_doRemove
 
@@ -195,7 +195,7 @@ Override to perform custom remove logic
 
 -   `id` **id** ID to remove
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The updated instance
 
 #### save
 
@@ -203,8 +203,8 @@ Implement object save for create and edit routes.
 
 **Parameters**
 
--   `req` **[Request](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/request)** The express request object
--   `res` **[Response](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)** The express response object
+-   `req` **[Request](https://developer.mozilla.org/Add-ons/SDK/High-Level_APIs/request)** The express request object
+-   `res` **[Response](https://developer.mozilla.org/docs/Web/Guide/HTML/HTML5)** The express response object
 
 #### replaceRouteParams
 
@@ -212,10 +212,10 @@ Replaces route parameters with values.
 
 **Parameters**
 
--   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** route path
--   `params` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** parameter replacements
+-   `route` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** route path
+-   `params` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** parameter replacements
 
-Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** route path, with parameters replaced
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** route path, with parameters replaced
 
 ### DataTablesMixin
 
@@ -283,10 +283,10 @@ Register a nav menu item
 
 **Parameters**
 
--   `menu` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Group of nav items
--   `label` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Text for menu item
--   `link` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** URL of menu item
--   `options` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Extra context for rendering (icon, css) (optional, default `{}`)
+-   `menu` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Group of nav items
+-   `label` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Text for menu item
+-   `link` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** URL of menu item
+-   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Extra context for rendering (icon, css) (optional, default `{}`)
 
 #### get
 
@@ -294,9 +294,9 @@ Retrieve a menu group
 
 **Parameters**
 
--   `menu` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Group of nav items
+-   `menu` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Group of nav items
 
-Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** Menu items
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** Menu items
 
 ### WebActions
 
