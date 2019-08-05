@@ -9,7 +9,7 @@ import ViewController from './ViewController'
 
 /**
  * A base class for CRUD routes and templates for a model
- * 
+ *
  * # Parameters
  *  See Controller docs
  *
@@ -19,17 +19,17 @@ import ViewController from './ViewController'
  *  * `redirectAfterCreate` - path suffix to routePrefix after route
  *  * `redirectAfterEdit` - path suffix to routePrefix after route
  *  * `redirectAfterDelete` - path suffix to routePrefix after route
- * 
- * 
+ *
+ *
  * # Implement Routes
- * 
+ *
  * The default implementation of the routes handles querying for the
  * model instance, pagination, and the template rendering. See the
  * specific method documentation for each public view function.
- * 
+ *
  * # Overriding templates
  * See also the `ViewController` templates documentation.
- * Assuming your `opts.prefix`/`opts.templatePrefix` is `my-module`, the following templates are registered with default implementations: 
+ * Assuming your `opts.prefix`/`opts.templatePrefix` is `my-module`, the following templates are registered with default implementations:
  *  * `my-module-create`
  *  * `my-module-edit`
  *
@@ -40,7 +40,7 @@ class EditController extends ViewController {
     super(options)
 
     this.routeDetail = '/edit'
-    
+
     let routePrefix = this.routePrefix
     router.route(routePrefix+"/create", ::this._create)
     router.route(routePrefix+"/edit/:id", ::this._edit)
@@ -53,7 +53,24 @@ class EditController extends ViewController {
     this.redirectAfterCreate = options.redirectAfterCreate || ""
     this.redirectAfterEdit = options.redirectAfterEdit || ""
     this.redirectAfterDelete = options.redirectAfterDelete || ""
-    
+
+    application.onceAfter('startup', () => {
+      templater.on('renderContext.admin-page', (opts) => {
+        return {
+          styles: [
+            '/assets/web/edit/datetimepicker/build/jquery.datetimepicker.min.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css'
+          ],
+          scripts: [
+            '/assets/web/edit/datetimepicker/build/jquery.datetimepicker.full.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js'
+          ]
+        }
+      })
+    })
+
+    router.staticRoute("/assets/web/edit/datetimepicker", __dirname+"/assets/datetimepicker")
+
     // Yes, these should be __dirname not local to the subclass
     // Subclass templates are expected to be loaded by MVCModule or manually?
     templater.default().template(__dirname+"/templates/web-controller-form.ejs", this.pageTemplate, this.templatePrefix+"-create")
@@ -70,7 +87,7 @@ class EditController extends ViewController {
     _.each(params, (val, key) => { route = route.replace(":" + key, val) })
     return route
   }
-  
+
   /*
   * Override to modify the routes used for redirects, links.
   * Useful to replace extra route `:params` in `this.routePrefix`.
@@ -85,7 +102,7 @@ class EditController extends ViewController {
   routeForRequest(req, route, inst) {
     return route
   }
-  
+
   defaultContext(req, related=false) {
     return super.defaultContext(req, related).then((ret) => {
       ret.instanceUrl = this.routeForRequest(req, this.routePrefix+this.routeDetail)
@@ -111,7 +128,11 @@ class EditController extends ViewController {
           return this.edit(req, res, finder).then((context) => {
             return Object.assign(defaultContext, context)
           })
-        }).then((context) => {
+        }).then(async (context) => {
+          let templates = await templater.getTemplates()
+          context.checkTemplate = (template) => {
+            return templates["web-form-input-"+template]
+          }
           return templater.render(this.templatePrefix+"-edit", context).then(::res.send)
         })
       }
@@ -136,8 +157,12 @@ class EditController extends ViewController {
     return Promise.all([
       this.create(req, res, {}),
       this.defaultContext(req, true)
-    ]).spread((context, defaultContext) => {
+    ]).spread(async (context, defaultContext) => {
       context = Object.assign(defaultContext, context)
+      let templates = await templater.getTemplates()
+      context.checkTemplate = (template) => {
+        return templates["web-form-input-"+template]
+      }
       return templater.render(this.templatePrefix+"-create", context).then(::res.send)
     })
   }
@@ -149,7 +174,7 @@ class EditController extends ViewController {
    * @param {object} object An empty object for setting defaults for the template
    * @returns {object} The context for template rendering.
    */
-  
+
   create(req, res, object) {
     return {title: "Create " + this.displayName, object}
   }
@@ -202,7 +227,7 @@ class EditController extends ViewController {
     return inst
   }
 
-  
+
    /**
    * Override to perform custom remove logic
    * @param {id} id ID to remove
@@ -237,7 +262,7 @@ class EditController extends ViewController {
       this.log.error(e.toString())
       req.flash('error', "Error saving "+this.displayName+": "+e)
     }
-    
+
     if (this.redirect) {
       res.redirect(this.routeForRequest(req,
           this.routePrefix + (id ? this.redirectAfterEdit : this.redirectAfterCreate),
@@ -267,7 +292,7 @@ class EditController extends ViewController {
       return [values, relatedValues]
     })
   }
-  
+
   async remove(req, res) {
     let inst
     try {
@@ -282,7 +307,7 @@ class EditController extends ViewController {
           this.routePrefix + this.redirectAfterDelete,
           inst))
     }
-  }  
+  }
 }
 
 export default EditController
