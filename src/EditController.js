@@ -53,24 +53,6 @@ class EditController extends ViewController {
     this.redirectAfterCreate = options.redirectAfterCreate || ""
     this.redirectAfterEdit = options.redirectAfterEdit || ""
     this.redirectAfterDelete = options.redirectAfterDelete || ""
-
-    application.onceAfter('startup', () => {
-      templater.on('renderContext.admin-page', (opts) => {
-        return {
-          styles: [
-            '/assets/web/edit/datetimepicker/build/jquery.datetimepicker.min.css',
-            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css'
-          ],
-          scripts: [
-            '/assets/web/edit/datetimepicker/build/jquery.datetimepicker.full.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js'
-          ]
-        }
-      })
-    })
-
-    router.staticRoute("/assets/web/edit/datetimepicker", __dirname+"/assets/datetimepicker")
-
     // Yes, these should be __dirname not local to the subclass
     // Subclass templates are expected to be loaded by MVCModule or manually?
     templater.default().template(__dirname+"/templates/web-controller-form.ejs", this.pageTemplate, this.templatePrefix+"-create")
