@@ -2,16 +2,18 @@
     <input type="hidden" id="id" name="<%= idField %>" value="<%= object[idField] %>" />
     <div class="form-body">
       <% attributes.forEach(function(attr) { %>
-        <% if(typeof attr.type != 'undefined') { %>
-            <% attr.value = object[attr.name] %>
+        <% attr.value = object[attr.name] %>
+        <% attr.object = object %>
+        <% if(checkTemplate(attr.name)) { %>
+          <%- render("web-form-input-"+attr.name, attr) %>
+        <% } else if(typeof attr.type != 'undefined') { %>
             <%- render("web-form-input-"+attr.type, attr) %>
         <% } %>
       <% }) %>
-
     </div>
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-7">
-            <button class="btn btn-theme" type="submit">Save <%= displayName %></button>        
+            <button class="btn btn-primary" type="submit">Save <%= displayName %></button>
         </div>
     </div>
 </form>

@@ -1,1 +1,6 @@
-<%- include('./web-form-input-string', {type: 'date', name: name, label: label, value: value}) %>
+<%- include('./web-form-input-string', {type: 'text', name: name, label: label, value: moment(value).format("YYYY/MM/DD")}) %>
+<script>
+$( function() {
+  $( "input[name=<%- name %>]" ).datetimepicker({timepicker: false});
+} );
+</script>
