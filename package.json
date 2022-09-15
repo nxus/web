@@ -41,7 +41,7 @@
     "should": "^7.0.2",
     "sinon": "^1.17.2",
     "chai": "^3.5.0",
-    "documentation": "^4.0.0-beta9",
+    "documentation": "^14.0.0",
     "chai-as-promised": "^5.2.0",
     "babel-plugin-transform-function-bind": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
